@@ -31,9 +31,6 @@
   ]
 }
 </script>
-<!-- TODO: the schema.org block above helps Google show rich hotel results and,
-     over time, free booking links — fill in real geo coordinates and a
-     starRating once available for even better search visibility. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -88,7 +85,6 @@
         <path d="M11 24 L20 15 L29 24" stroke="#f2e6df" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         <text x="20" y="27" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#f2e6df" font-weight="bold">E</text>
       </svg>
-      <!-- TODO: replace the SVG monogram above with <img src="logo.png" class="h-9 w-9 rounded-full" alt="Enuana Hotels & Suites logo"> once you export the real hotel logo (no logo image file was included in your upload). -->
       <span class="font-serif text-xl md:text-2xl tracking-wide text-white nav-text">Enuana</span>
       <span class="hidden sm:inline text-xs uppercase tracking-widest text-brand-200 nav-text">Hotels &amp; Suites</span>
     </a>
@@ -105,7 +101,6 @@
       <button onclick="openBooking()" class="hidden sm:inline-block bg-brand-400 hover:bg-brand-600 text-white text-sm font-semibold px-5 py-2 rounded-full transition">
         Book Now
       </button>
-      <!-- Mobile hamburger -->
       <button id="menuBtn" class="md:hidden text-white p-2" aria-label="Open menu">
         <svg id="iconOpen" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -117,7 +112,6 @@
     </div>
   </div>
 
-  <!-- Mobile menu panel -->
   <div id="mobileMenu" class="md:hidden overflow-hidden max-h-0 opacity-0 bg-brand-900/98 backdrop-blur">
     <nav class="flex flex-col px-5 py-4 gap-4 text-white text-base">
       <a href="#rooms" class="mobile-link py-1 border-b border-white/10">Rooms</a>
@@ -201,7 +195,7 @@
   </div>
 
   <div id="roomsGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <!-- Rooms are rendered here by loadRooms(). Skeletons show while Firestore loads. -->
+    <!-- Rooms are rendered here by loadRooms() -->
   </div>
   <p id="roomsFallbackNote" class="text-xs text-brand-900/50 mt-4 hidden">
     * Showing sample rooms — connect Firestore <code>/rooms</code> to display live availability and pricing.
@@ -374,7 +368,7 @@
   </div>
 </div>
 
-<!-- Firebase (compat build — plain <script> tags, no bundler needed) -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <!-- Paystack Inline -->
@@ -417,7 +411,7 @@
 
   // ---------- Booking modal state ----------
   let currentRoom = { name: '', rate: 0 };
-  let liveRooms = []; // populated by loadRooms()
+  let liveRooms = [];
 
   function openBooking(roomName = '', rate = 0) {
     currentRoom = { name: roomName, rate };
@@ -460,13 +454,6 @@
   }
 
   // ================= FIREBASE INIT =================
-  // Uses the SAME Firebase project as frontdesk.html / hr.html / accounts.html /
-  // admin.html on purpose: bookings made here need to land in the exact
-  // Firestore that Front Desk and Accounts read from, or online guests would
-  // never show up anywhere staff can see them. (If you'd rather keep Enuana's
-  // data fully isolated from other client apps sharing this Firebase project,
-  // create a dedicated Firebase project later and swap this config + the
-  // config in the other five HTML files at the same time — they must all match.)
   const firebaseConfig = {
     apiKey: "AIzaSyD7ty4-tgDn3iQNchRmCDn7lO14kgem10o",
     authDomain: "mcode-expiring.firebaseapp.com",
@@ -485,8 +472,7 @@
     console.warn('Firebase not configured yet — running in fallback mode.', e);
   }
 
-  // ================= CURRENCY TOGGLE (display only — Paystack always charges NGN) =================
-  // TODO: update this rate periodically, or replace with a live FX API call.
+  // ================= CURRENCY TOGGLE =================
   const USD_RATE = 1600;
   let displayCurrency = 'NGN';
 
@@ -508,7 +494,7 @@
   }
   window.setCurrency = setCurrency;
 
-  // ---------- Static fallback rooms (shown if Firestore has no data / isn't configured) ----------
+  // ---------- Static fallback rooms ----------
   const fallbackRooms = [
     { name: 'Standard Room', rate: 15000, img: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=800&auto=format&fit=crop', desc: 'Cozy and comfortable, perfect for solo travelers or short stays.' },
     { name: 'Deluxe Room', rate: 25000, img: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?q=80&w=800&auto=format&fit=crop', desc: 'Spacious room with premium furnishing and a work area.' },
@@ -519,7 +505,7 @@
     return `
       <div class="room-card bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-100 group">
         <div class="overflow-hidden h-52">
-          <img src="${room.img}" alt="${room.name}" loading="lazy" class="room-img w-full h-full object-cover transition duration-500" />
+          <img src="\( {room.img}" alt=" \){room.name}" loading="lazy" class="room-img w-full h-full object-cover transition duration-500" />
         </div>
         <div class="p-5">
           <div class="flex justify-between items-start mb-2">
@@ -551,7 +537,7 @@
     const grid = document.getElementById('roomsGrid');
     grid.innerHTML = rooms.map(renderRoomCard).join('');
     roomChoice.innerHTML = '<option value="">Select a room…</option>' +
-      rooms.map(r => `<option value="${r.name}">${r.name} — ₦${r.rate.toLocaleString()}/night</option>`).join('');
+      rooms.map(r => `<option value="\( {r.name}"> \){r.name} — ₦${r.rate.toLocaleString()}/night</option>`).join('');
   }
 
   function loadRooms() {
@@ -621,8 +607,8 @@
   });
 
   // ================= BOOKING FORM → PAYSTACK =================
-  // TODO: replace with your live Paystack public key
-  const PAYSTACK_PUBLIC_KEY = 'pk_test_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+  const PAYSTACK_PUBLIC_KEY = "pk_live_1360dbbf248bd92c3afcb1b2b9a132f13f941d83";
+  const PAYSTACK_SUBACCOUNT = "ACCT_0r1hbtllzxiq7n9";
 
   bookingForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -653,21 +639,32 @@
     const handler = PaystackPop.setup({
       key: PAYSTACK_PUBLIC_KEY,
       email: guestEmail,
-      amount: total * 100, // Paystack expects kobo
+      amount: total * 100,          // Paystack expects amount in kobo
       currency: 'NGN',
+      subaccount: PAYSTACK_SUBACCOUNT,  // ← money goes to this subaccount
+      // bearer: 'subaccount',         // uncomment if you want the subaccount to pay the fee
+      // transaction_charge: 0,        // optional: amount (in kobo) you want to keep on main account
       metadata: {
-        guestName, guestPhone, room: currentRoom.name, checkIn, checkOut, nights
+        guestName,
+        guestPhone,
+        room: currentRoom.name,
+        checkIn,
+        checkOut,
+        nights
       },
       callback: function (response) {
-        // NOTE: for production, verify response.reference server-side
-        // (Pipedream webhook + HMAC-SHA512 signature check) before
-        // marking the booking as paid — never trust the client alone.
+        // NOTE: For production, verify the payment server-side before confirming
         (async () => {
           try {
             if (db) {
               await db.collection('bookings').add({
-                guestName, guestEmail, guestPhone,
-                room: currentRoom.name, checkIn, checkOut, nights,
+                guestName,
+                guestEmail,
+                guestPhone,
+                room: currentRoom.name,
+                checkIn,
+                checkOut,
+                nights,
                 amount: total,
                 reference: response.reference,
                 status: 'paid_pending_verification',
@@ -693,6 +690,7 @@
         status.textContent = 'Payment window closed.';
       }
     });
+
     handler.openIframe();
   });
 </script>
