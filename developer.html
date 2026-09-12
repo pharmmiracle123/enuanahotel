@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Developer Console | Enuana Hotels</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#faf6f4', 100: '#f2e6df', 200: '#e2c4b5', 300: '#cf9d81',
+              400: '#a8654a', 600: '#7a4531', 700: '#5c3325', 800: '#3d2118', 900: '#241310'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; }
+    .tab-btn.active { border-bottom: 3px solid #a8654a; color: #a8654a; font-weight: 700; }
+    .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #a8654a; border-radius: 50%; width: 22px; height: 22px; animation: spin 0.8s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+
+  <!-- ===================== LOGIN ===================== -->
+  <div id="loginScreen" class="min-h-screen flex items-center justify-center px-5 bg-brand-900">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold text-brand-800">Developer Console</h1>
+        <p class="text-sm text-gray-500 mt-1">Enuana Hotels & Suites</p>
+        <p class="text-xs text-gray-400 mt-2">Restricted access</p>
+      </div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input type="email" id="loginEmail" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-400 outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Password</label>
+          <input type="password" id="loginPassword" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-400 outline-none" />
+        </div>
+        <button type="submit" id="loginBtn"
+                class="w-full bg-brand-400 hover:bg-brand-600 text-white font-semibold py-3.5 rounded-xl transition">
+          Sign In
+        </button>
+        <p id="loginError" class="text-red-500 text-sm text-center hidden"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <div id="dashboard" class="hidden">
+
+    <!-- Header -->
+    <header class="bg-brand-900 text-white sticky top-0 z-30 shadow">
+      <div class="max-w-6xl mx-auto px-5 py-4 flex justify-between items-center">
+        <div>
+          <h1 class="text-xl font-bold">Enuana Hotels</h1>
+          <p class="text-xs text-brand-200">Developer Console</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="userEmailDisplay" class="text-xs text-brand-200 hidden sm:inline"></span>
+          <button onclick="logout()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-semibold">
+            <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="bg-white border-b sticky top-[68px] z-20">
+      <div class="max-w-6xl mx-auto px-5 flex gap-6 overflow-x-auto">
+        <button onclick="switchTab('rooms')" id="tab-rooms-btn" class="tab-btn active py-4 text-sm whitespace-nowrap">
+          <i class="fa-solid fa-bed mr-1"></i> Rooms
+        </button>
+        <button onclick="switchTab('media')" id="tab-media-btn" class="tab-btn py-4 text-sm whitespace-nowrap">
+          <i class="fa-solid fa-images mr-1"></i> Media Library
+        </button>
+        <button onclick="switchTab('bookings')" id="tab-bookings-btn" class="tab-btn py-4 text-sm whitespace-nowrap">
+          <i class="fa-solid fa-calendar-check mr-1"></i> Bookings
+        </button>
+        <button onclick="switchTab('enquiries')" id="tab-enquiries-btn" class="tab-btn py-4 text-sm whitespace-nowrap">
+          <i class="fa-solid fa-envelope mr-1"></i> Enquiries
+        </button>
+      </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-5 py-8">
+
+      <!-- ============ ROOMS TAB ============ -->
+      <div id="tab-rooms">
+
+        <!-- Add / Edit Form -->
+        <div class="bg-white rounded-2xl shadow-sm border p-6 mb-10">
+          <h2 id="formTitle" class="text-xl font-bold mb-6">Add New Room</h2>
+
+          <form id="roomForm" class="grid md:grid-cols-2 gap-5">
+            <input type="hidden" id="roomId">
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Room Name</label>
+              <input type="text" id="r-name" required placeholder="e.g. Deluxe Room"
+                     class="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand-400">
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Rate per night (₦)</label>
+              <input type="number" id="r-rate" required placeholder="e.g. 25000"
+                     class="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand-400">
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Status</label>
+              <select id="r-status" class="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand-400">
+                <option value="vacant">Vacant</option>
+                <option value="occupied">Occupied</option>
+                <option value="maintenance">Maintenance</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Description</label>
+              <input type="text" id="r-desc" placeholder="Short description"
+                     class="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand-400">
+            </div>
+
+            <!-- IMAGE UPLOAD -->
+            <div class="md:col-span-2">
+              <label class="block text-sm font-semibold mb-2">Main Image</label>
+              <div class="flex flex-col sm:flex-row gap-4 items-start">
+                <img id="imagePreview" src="https://via.placeholder.com/160x120?text=No+Image"
+                     class="w-40 h-28 object-cover rounded-xl border bg-gray-100">
+                <div class="flex-1 space-y-3 w-full">
+                  <button type="button" onclick="openCloudinary('image')"
+                          class="w-full sm:w-auto bg-gray-900 hover:bg-black text-white px-5 py-3 rounded-xl text-sm font-medium">
+                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Upload from Phone / Gallery
+                  </button>
+                  <input type="text" id="r-img" placeholder="Or paste Cloudinary URL here"
+                         class="w-full border rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand-400">
+                </div>
+              </div>
+            </div>
+
+            <!-- VIDEO -->
+            <div class="md:col-span-2">
+              <label class="block text-sm font-semibold mb-2">Video (optional)</label>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <button type="button" onclick="openCloudinary('video')"
+                        class="bg-gray-900 hover:bg-black text-white px-5 py-3 rounded-xl text-sm font-medium">
+                  <i class="fa-solid fa-video mr-2"></i> Upload Video
+                </button>
+                <input type="text" id="r-video" placeholder="Or paste video URL"
+                       class="flex-1 border rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand-400">
+              </div>
+            </div>
+
+            <div class="md:col-span-2 flex gap-3 mt-2">
+              <button type="submit" id="saveBtn"
+                      class="flex-1 bg-brand-400 hover:bg-brand-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2">
+                <span id="saveBtnText">Save Room</span>
+              </button>
+              <button type="button" onclick="resetForm()"
+                      class="px-6 py-4 border rounded-xl font-semibold hover:bg-gray-50">
+                Clear
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Rooms List -->
+        <div class="flex justify-between items-center mb-5">
+          <h2 class="text-xl font-bold">Current Rooms</h2>
+          <span id="roomCount" class="text-sm text-gray-500"></span>
+        </div>
+
+        <div id="roomsLoading" class="text-center py-12">
+          <div class="spinner mx-auto"></div>
+          <p class="text-gray-500 mt-3 text-sm">Loading rooms...</p>
+        </div>
+
+        <div id="roomsList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+        <p id="noRooms" class="hidden text-center text-gray-500 py-12">No rooms yet. Add your first one above.</p>
+      </div>
+
+      <!-- ============ MEDIA LIBRARY ============ -->
+      <div id="tab-media" class="hidden">
+        <div class="bg-white rounded-2xl shadow-sm border p-6">
+          <h2 class="text-xl font-bold mb-2">Media Library</h2>
+          <p class="text-sm text-gray-500 mb-6">Upload any image or video. Copy the URL and paste it into a room.</p>
+
+          <button onclick="openCloudinary('media')"
+                  class="bg-brand-400 hover:bg-brand-600 text-white px-6 py-3.5 rounded-xl font-medium">
+            <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Upload Image / Video
+          </button>
+
+          <div id="lastUploadBox" class="mt-8 hidden">
+            <p class="text-sm font-medium mb-2">Last uploaded URL:</p>
+            <div class="flex gap-2">
+              <input type="text" id="lastUrl" readonly class="flex-1 border rounded-xl px-4 py-3 text-sm bg-gray-50">
+              <button onclick="copyLastUrl()" class="bg-gray-900 text-white px-5 rounded-xl text-sm">
+                Copy
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ BOOKINGS ============ -->
+      <div id="tab-bookings" class="hidden">
+        <h2 class="text-xl font-bold mb-6">Recent Bookings</h2>
+        <div id="bookingsList" class="space-y-4"></div>
+        <p id="noBookings" class="hidden text-center text-gray-500 py-12">No bookings yet.</p>
+      </div>
+
+      <!-- ============ ENQUIRIES ============ -->
+      <div id="tab-enquiries" class="hidden">
+        <h2 class="text-xl font-bold mb-6">Enquiries</h2>
+        <div id="enquiriesList" class="space-y-4"></div>
+        <p id="noEnquiries" class="hidden text-center text-gray-500 py-12">No enquiries yet.</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="hidden fixed bottom-6 left-6 right-6 md:left-auto md:right-6 z-50 bg-gray-900 text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-green-400"></i>
+    <span id="toastText"></span>
+  </div>
+
+  <!-- DELETE CONFIRM -->
+  <div id="confirmModal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-5">
+    <div class="bg-white rounded-2xl p-6 max-w-sm w-full">
+      <h3 class="font-bold text-lg mb-2">Delete Room?</h3>
+      <p class="text-gray-600 text-sm mb-6">This action cannot be undone.</p>
+      <div class="flex gap-3">
+        <button onclick="confirmDelete()" class="flex-1 bg-red-600 text-white py-3 rounded-xl font-bold">Delete</button>
+        <button onclick="closeConfirm()" class="flex-1 border py-3 rounded-xl font-semibold">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // ===================== FIREBASE =====================
+    const firebaseConfig = {
+      apiKey: "AIzaSyD7ty4-tgDn3iQNchRmCDn7lO14kgem10o",
+      authDomain: "mcode-expiring.firebaseapp.com",
+      projectId: "mcode-expiring",
+      storageBucket: "mcode-expiring.firebasestorage.app",
+      messagingSenderId: "755995268786",
+      appId: "1:755995268786:web:d961cf7836f51a0c0e9bab",
+      measurementId: "G-6TRLRCVLJM"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // ===================== CLOUDINARY =====================
+    const CLOUDINARY_CLOUD_NAME = "xhkfiry2";
+    const CLOUDINARY_UPLOAD_PRESET = "Project1";
+
+    // ===================== STATE =====================
+    let editingId = null;
+    let deleteTargetId = null;
+    let currentRooms = [];
+
+    // ===================== AUTH =====================
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        document.getElementById('userEmailDisplay').textContent = user.email;
+        loadRooms();
+        loadBookings();
+        loadEnquiries();
+      } else {
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('dashboard').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('loginBtn');
+      const errorEl = document.getElementById('loginError');
+
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+      errorEl.classList.add('hidden');
+
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    });
+
+    function logout() {
+      auth.signOut();
+    }
+
+    // ===================== TABS =====================
+    function switchTab(tab) {
+      ['rooms', 'media', 'bookings', 'enquiries'].forEach(t => {
+        document.getElementById('tab-' + t).classList.add('hidden');
+        document.getElementById('tab-' + t + '-btn').classList.remove('active');
+      });
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      document.getElementById('tab-' + tab + '-btn').classList.add('active');
+    }
+
+    // ===================== CLOUDINARY UPLOAD =====================
+    function openCloudinary(type) {
+      const widget = cloudinary.createUploadWidget({
+        cloudName: CLOUDINARY_CLOUD_NAME,
+        uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+        sources: ['local', 'camera', 'url'],
+        multiple: false,
+        maxFileSize: 100000000,
+        resourceType: type === 'video' ? 'video' : 'auto',
+        folder: 'enuana_hotels',
+        styles: {
+          palette: {
+            window: "#FFFFFF",
+            windowBorder: "#a8654a",
+            tabIcon: "#a8654a",
+            menuIcons: "#5A616A",
+            textDark: "#000000",
+            textLight: "#FFFFFF",
+            link: "#a8654a",
+            action: "#a8654a",
+            inactiveTabIcon: "#0E2F5A",
+            error: "#F44235",
+            inProgress: "#a8654a",
+            complete: "#20B832",
+            sourceBg: "#E4EBF1"
+          }
+        }
+      }, (error, result) => {
+        if (!error && result && result.event === "success") {
+          const url = result.info.secure_url;
+
+          if (type === 'image') {
+            document.getElementById('r-img').value = url;
+            document.getElementById('imagePreview').src = url;
+          } else if (type === 'video') {
+            document.getElementById('r-video').value = url;
+          } else if (type === 'media') {
+            document.getElementById('lastUploadBox').classList.remove('hidden');
+            document.getElementById('lastUrl').value = url;
+          }
+
+          showToast('Uploaded successfully!');
+        }
+      });
+
+      widget.open();
+    }
+
+    function copyLastUrl() {
+      const url = document.getElementById('lastUrl').value;
+      navigator.clipboard.writeText(url);
+      showToast('URL copied!');
+    }
+
+    // Live preview when pasting URL
+    document.getElementById('r-img').addEventListener('input', (e) => {
+      document.getElementById('imagePreview').src = e.target.value || 'https://via.placeholder.com/160x120?text=No+Image';
+    });
+
+    // ===================== ROOMS CRUD =====================
+    document.getElementById('roomForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('saveBtn');
+      const btnText = document.getElementById('saveBtnText');
+
+      btn.disabled = true;
+      btnText.textContent = 'Saving...';
+
+      const data = {
+        name: document.getElementById('r-name').value.trim(),
+        rate: Number(document.getElementById('r-rate').value),
+        status: document.getElementById('r-status').value,
+        desc: document.getElementById('r-desc').value.trim(),
+        img: document.getElementById('r-img').value.trim(),
+        video: document.getElementById('r-video').value.trim(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      try {
+        if (editingId) {
+          await db.collection('rooms').doc(editingId).update(data);
+          showToast('Room updated successfully!');
+        } else {
+          data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          await db.collection('rooms').add(data);
+          showToast('Room added successfully!');
+        }
+        resetForm();
+      } catch (err) {
+        console.error(err);
+        showToast('Error: ' + err.message, true);
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = 'Save Room';
+      }
+    });
+
+    function resetForm() {
+      editingId = null;
+      document.getElementById('roomForm').reset();
+      document.getElementById('roomId').value = '';
+      document.getElementById('formTitle').textContent = 'Add New Room';
+      document.getElementById('saveBtnText').textContent = 'Save Room';
+      document.getElementById('imagePreview').src = 'https://via.placeholder.com/160x120?text=No+Image';
+    }
+
+    function loadRooms() {
+      document.getElementById('roomsLoading').classList.remove('hidden');
+
+      db.collection('rooms').onSnapshot(snap => {
+        currentRooms = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderRooms();
+        document.getElementById('roomsLoading').classList.add('hidden');
+      }, err => {
+        console.error(err);
+        document.getElementById('roomsLoading').classList.add('hidden');
+        showToast('Permission error loading rooms', true);
+      });
+    }
+
+    function renderRooms() {
+      const list = document.getElementById('roomsList');
+      const noRooms = document.getElementById('noRooms');
+      document.getElementById('roomCount').textContent = currentRooms.length + ' room' + (currentRooms.length !== 1 ? 's' : '');
+
+      if (currentRooms.length === 0) {
+        list.innerHTML = '';
+        noRooms.classList.remove('hidden');
+        return;
+      }
+      noRooms.classList.add('hidden');
+
+      list.innerHTML = currentRooms.map(room => `
+        <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+          <div class="h-44 bg-gray-100 relative">
+            <img src="${room.img || 'https://via.placeholder.com/400x250?text=No+Image'}"
+                 class="w-full h-full object-cover"
+                 onerror="this.src='https://via.placeholder.com/400x250?text=No+Image'">
+            <span class="absolute top-3 right-3 text-xs px-2.5 py-1 rounded-full font-medium
+                         ${room.status === 'vacant' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+              ${room.status || 'unknown'}
+            </span>
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start">
+              <h3 class="font-bold text-lg">${room.name || 'Unnamed'}</h3>
+              <span class="text-brand-400 font-semibold">₦${(room.rate || 0).toLocaleString()}</span>
+            </div>
+            <p class="text-sm text-gray-500 mt-1 line-clamp-2">${room.desc || ''}</p>
+            <div class="flex gap-2 mt-4">
+              <button onclick="editRoom('${room.id}')"
+                      class="flex-1 border border-brand-400 text-brand-600 py-2.5 rounded-xl text-sm font-medium hover:bg-brand-50">
+                <i class="fa-solid fa-pen mr-1"></i> Edit
+              </button>
+              <button onclick="openConfirm('${room.id}')"
+                      class="flex-1 border border-red-400 text-red-600 py-2.5 rounded-xl text-sm font-medium hover:bg-red-50">
+                <i class="fa-solid fa-trash mr-1"></i> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function editRoom(id) {
+      const room = currentRooms.find(r => r.id === id);
+      if (!room) return;
+
+      editingId = id;
+      document.getElementById('roomId').value = id;
+      document.getElementById('r-name').value = room.name || '';
+      document.getElementById('r-rate').value = room.rate || '';
+      document.getElementById('r-status').value = room.status || 'vacant';
+      document.getElementById('r-desc').value = room.desc || '';
+      document.getElementById('r-img').value = room.img || '';
+      document.getElementById('r-video').value = room.video || '';
+      document.getElementById('imagePreview').src = room.img || 'https://via.placeholder.com/160x120?text=No+Image';
+
+      document.getElementById('formTitle').textContent = 'Edit Room';
+      document.getElementById('saveBtnText').textContent = 'Update Room';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openConfirm(id) {
+      deleteTargetId = id;
+      document.getElementById('confirmModal').classList.remove('hidden');
+    }
+    function closeConfirm() {
+      deleteTargetId = null;
+      document.getElementById('confirmModal').classList.add('hidden');
+    }
+
+    async function confirmDelete() {
+      if (!deleteTargetId) return;
+      try {
+        await db.collection('rooms').doc(deleteTargetId).delete();
+        showToast('Room deleted');
+        closeConfirm();
+      } catch (err) {
+        showToast('Error deleting: ' + err.message, true);
+        closeConfirm();
+      }
+    }
+
+    // ===================== BOOKINGS =====================
+    function loadBookings() {
+      db.collection('bookings').orderBy('createdAt', 'desc').limit(40).onSnapshot(snap => {
+        const list = document.getElementById('bookingsList');
+        const no = document.getElementById('noBookings');
+
+        if (snap.empty) {
+          list.innerHTML = '';
+          no.classList.remove('hidden');
+          return;
+        }
+        no.classList.add('hidden');
+
+        list.innerHTML = snap.docs.map(doc => {
+          const b = doc.data();
+          return `
+            <div class="bg-white rounded-xl border p-5">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="font-semibold">${b.guestName || 'Guest'}</p>
+                  <p class="text-sm text-gray-500">${b.guestEmail || ''}</p>
+                  <p class="text-xs text-gray-400 mt-1">${b.room || ''} • ${b.checkIn || ''} → ${b.checkOut || ''}</p>
+                </div>
+                <div class="text-right">
+                  <p class="font-bold text-brand-600">₦${(b.amount || 0).toLocaleString()}</p>
+                  <p class="text-xs text-gray-500 mt-1">${b.status || ''}</p>
+                </div>
+              </div>
+              <p class="text-xs font-mono text-gray-400 mt-3">${b.reference || ''}</p>
+            </div>
+          `;
+        }).join('');
+      });
+    }
+
+    // ===================== ENQUIRIES =====================
+    function loadEnquiries() {
+      db.collection('enquiries').orderBy('createdAt', 'desc').limit(30).onSnapshot(snap => {
+        const list = document.getElementById('enquiriesList');
+        const no = document.getElementById('noEnquiries');
+
+        if (snap.empty) {
+          list.innerHTML = '';
+          no.classList.remove('hidden');
+          return;
+        }
+        no.classList.add('hidden');
+
+        list.innerHTML = snap.docs.map(doc => {
+          const e = doc.data();
+          return `
+            <div class="bg-white rounded-xl border p-5">
+              <div class="flex justify-between">
+                <div>
+                  <p class="font-semibold">${e.name || ''}</p>
+                  <p class="text-sm text-gray-500">${e.phone || ''}</p>
+                </div>
+                <span class="text-xs text-gray-400">${e.createdAt?.toDate ? e.createdAt.toDate().toLocaleString() : ''}</span>
+              </div>
+              <p class="mt-3 text-sm text-gray-700">${e.message || ''}</p>
+            </div>
+          `;
+        }).join('');
+      });
+    }
+
+    // ===================== TOAST =====================
+    function showToast(text, isError = false) {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toastIcon');
+      document.getElementById('toastText').textContent = text;
+      icon.className = isError
+        ? 'fa-solid fa-circle-exclamation text-red-400'
+        : 'fa-solid fa-circle-check text-green-400';
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+  </script>
+</body>
+    </html>
