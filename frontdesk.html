@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Front Desk | Enuana Hotels & Suites</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='19' fill='%23a8654a'/%3E%3Cpath d='M11 24 L20 15 L29 24' stroke='%23f2e6df' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ctext x='20' y='28' text-anchor='middle' font-family='Georgia,serif' font-size='14' fill='%23f2e6df' font-weight='bold'%3EE%3C/text%3E%3C/svg%3E" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            50: '#faf6f4', 100: '#f2e6df', 200: '#e2c4b5',
+            400: '#a8654a', 600: '#7a4531', 700: '#5c3325',
+            800: '#3d2118', 900: '#241310'
+          },
+          status: {
+            vacant: '#16a34a',
+            occupied: '#dc2626',
+            reserved: '#d97706',
+            dirty: '#6b7280'
+          }
+        },
+        fontFamily: { serif: ['Georgia', 'Cambria', 'serif'] }
+      }
+    }
+  }
+</script>
+<style>
+  .fade-in { animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+  .spinner {
+    border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
+    border-radius: 50%; width: 16px; height: 16px;
+    animation: spin 0.6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loadingScreen { transition: opacity 0.3s ease; }
+</style>
+</head>
+<body class="bg-brand-50 text-brand-900">
+
+<!-- Auth gate loading screen -->
+<div id="loadingScreen" class="fixed inset-0 bg-brand-900 z-[100] flex items-center justify-center">
+  <p class="text-white text-sm">Checking access…</p>
+</div>
+
+<!-- ===================== NAV ===================== -->
+<header class="bg-brand-800 text-white">
+  <div class="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg width="34" height="34" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Enuana Hotels & Suites logo" class="shrink-0">
+        <circle cx="20" cy="20" r="19" fill="#a8654a" stroke="#f2e6df" stroke-width="1.5"/>
+        <path d="M11 24 L20 15 L29 24" stroke="#f2e6df" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="20" y="27" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#f2e6df" font-weight="bold">E</text>
+      </svg>
+      <!-- TODO: replace the SVG monogram above with <img src="logo.png" class="h-9 w-9 rounded-full" alt="Enuana Hotels & Suites logo"> once you export the real hotel logo (no logo image file was included in your upload). -->
+      <span class="font-serif text-lg">Enuana</span>
+      <span class="text-xs uppercase tracking-widest text-brand-200">Front Desk</span>
+    </div>
+    <div class="flex items-center gap-4 text-sm">
+      <span id="staffName" class="text-brand-200"></span>
+      <button onclick="logout()" class="bg-brand-700 hover:bg-brand-600 px-4 py-1.5 rounded-full transition">Sign Out</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-5 py-8">
+
+  <!-- Summary strip -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-xl p-4 border border-brand-100">
+      <p class="text-xs text-brand-900/50 uppercase tracking-wide">Vacant</p>
+      <p id="countVacant" class="text-2xl font-serif text-green-600">0</p>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-brand-100">
+      <p class="text-xs text-brand-900/50 uppercase tracking-wide">Occupied</p>
+      <p id="countOccupied" class="text-2xl font-serif text-red-600">0</p>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-brand-100">
+      <p class="text-xs text-brand-900/50 uppercase tracking-wide">Reserved</p>
+      <p id="countReserved" class="text-2xl font-serif text-amber-600">0</p>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-brand-100">
+      <p class="text-xs text-brand-900/50 uppercase tracking-wide">Needs Cleaning</p>
+      <p id="countDirty" class="text-2xl font-serif text-gray-600">0</p>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="font-serif text-2xl">Room Status</h1>
+    <div id="offlineBadge" class="hidden text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full">
+      Offline — changes will sync when reconnected
+    </div>
+  </div>
+
+  <!-- Room grid -->
+  <div id="roomsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
+    <p class="col-span-full text-sm text-brand-900/50">Loading rooms...</p>
+  </div>
+
+  <!-- Active guests table -->
+  <h2 class="font-serif text-2xl mb-4">Current Guests</h2>
+  <div class="bg-white rounded-xl border border-brand-100 overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-brand-100/60 text-brand-900/70 text-left">
+        <tr>
+          <th class="px-4 py-3">Guest</th>
+          <th class="px-4 py-3">Room</th>
+          <th class="px-4 py-3">Check-in</th>
+          <th class="px-4 py-3">Expected Out</th>
+          <th class="px-4 py-3">Balance</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody id="guestsTable">
+        <tr><td colspan="6" class="px-4 py-6 text-center text-brand-900/40">No active guests yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- ===================== CHECK-IN MODAL ===================== -->
+<div id="checkinModal" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center px-4">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 relative fade-in">
+    <button onclick="closeCheckinModal()" class="absolute top-4 right-4 text-brand-900/50 hover:text-brand-900">✕</button>
+    <h3 class="font-serif text-2xl mb-1">Check In Guest</h3>
+    <p id="checkinRoomLabel" class="text-sm text-brand-900/60 mb-5">Room —</p>
+    <form id="checkinForm" class="space-y-3">
+      <input type="hidden" id="checkinRoomId" />
+      <input type="text" id="guestName" placeholder="Guest Full Name" required
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      <input type="tel" id="guestPhone" placeholder="Phone Number" required
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      <input type="text" id="guestId" placeholder="ID Type & Number (e.g. NIN 12345...)"
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-brand-900/60">Rate/night (₦)</label>
+          <input type="number" id="rate" required
+            class="w-full px-3 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+        </div>
+        <div>
+          <label class="text-xs text-brand-900/60">Deposit Paid (₦)</label>
+          <input type="number" id="deposit" value="0"
+            class="w-full px-3 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+        </div>
+      </div>
+      <div>
+        <label class="text-xs text-brand-900/60">Expected Check-out</label>
+        <input type="date" id="expectedCheckout" required
+          class="w-full px-3 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      </div>
+      <p id="checkinError" class="hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></p>
+      <button type="submit" id="checkinSubmitBtn"
+        class="w-full bg-brand-400 hover:bg-brand-600 text-white font-semibold py-3 rounded-full transition">
+        Confirm Check-In
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== CHECK-OUT MODAL ===================== -->
+<div id="checkoutModal" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center px-4">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 relative fade-in">
+    <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-brand-900/50 hover:text-brand-900">✕</button>
+    <h3 class="font-serif text-2xl mb-1">Check Out Guest</h3>
+    <p id="checkoutGuestLabel" class="text-sm text-brand-900/60 mb-5"></p>
+    <div class="bg-brand-50 rounded-xl p-4 mb-4 space-y-2 text-sm">
+      <div class="flex justify-between"><span class="text-brand-900/60">Nights stayed</span><span id="checkoutNights">—</span></div>
+      <div class="flex justify-between"><span class="text-brand-900/60">Total bill</span><span id="checkoutTotal">—</span></div>
+      <div class="flex justify-between"><span class="text-brand-900/60">Deposit paid</span><span id="checkoutDeposit">—</span></div>
+      <div class="flex justify-between font-semibold border-t border-brand-200 pt-2"><span>Balance due</span><span id="checkoutBalance">—</span></div>
+    </div>
+    <label class="flex items-center gap-2 text-sm mb-4">
+      <input type="checkbox" id="balanceSettled" class="rounded" />
+      Balance has been settled in full
+    </label>
+    <button id="checkoutSubmitBtn" onclick="confirmCheckout()"
+      class="w-full bg-brand-400 hover:bg-brand-600 text-white font-semibold py-3 rounded-full transition">
+      Confirm Check-Out
+    </button>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, collection, onSnapshot, query, where,
+    addDoc, updateDoc, serverTimestamp, enableIndexedDbPersistence
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // ================= FIREBASE CONFIG =================
+  // TODO: paste the real enuana-hms config here (same one used across all modules)
+  const firebaseConfig = {
+  apiKey: "AIzaSyD7ty4-tgDn3iQNchRmCDn7lO14kgem10o",
+  authDomain: "mcode-expiring.firebaseapp.com",
+  projectId: "mcode-expiring",
+  storageBucket: "mcode-expiring.firebasestorage.app",
+  messagingSenderId: "755995268786",
+  appId: "1:755995268786:web:d961cf7836f51a0c0e9bab",
+  measurementId: "G-6TRLRCVLJM"
+};
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Offline resilience — queues writes locally when connection drops
+  enableIndexedDbPersistence(db).catch((err) => {
+    console.warn('Offline persistence not enabled:', err.code);
+  });
+
+  window.addEventListener('online', () => document.getElementById('offlineBadge').classList.add('hidden'));
+  window.addEventListener('offline', () => document.getElementById('offlineBadge').classList.remove('hidden'));
+
+  const ALLOWED_ADMIN_EMAILS = [
+    "onyekamiracle08@gmail.com",
+    "onyekaudechukwum@gmail.com",
+    "replace_with_third_admin_email@example.com"
+  ];
+  const isAdminEmail = (e) => ALLOWED_ADMIN_EMAILS.includes((e || "").toLowerCase().trim());
+
+  function hideLoading() {
+    const el = document.getElementById("loadingScreen");
+    if (!el) return;
+    el.style.opacity = "0";
+    setTimeout(() => el.remove(), 250);
+  }
+  function failGate(msg) {
+    const el = document.getElementById("loadingScreen");
+    if (el) {
+      el.innerHTML = `<p class="text-white text-sm text-center px-6">${msg}</p>
+        <button type="button" onclick="location.href='login.html'" class="mt-4 bg-brand-400 text-white px-5 py-2 rounded-full text-sm">Back to Login</button>`;
+    }
+  }
+  async function withTimeout(p, ms = 6000) {
+    return Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error("timeout")), ms))]);
+  }
+
+  let currentUser = null;
+
+  // ================= ROLE GUARD =================
+  onAuthStateChanged(auth, async (user) => {
+    try {
+      if (!user) {
+        window.location.replace("login.html");
+        return;
+      }
+      const staffDoc = await withTimeout(getDoc(doc(db, "staff", user.uid)));
+      if (!staffDoc.exists()) {
+        if (isAdminEmail(user.email)) {
+          currentUser = { uid: user.uid, name: user.email.split("@")[0], role: "admin" };
+          document.getElementById("staffName").textContent = currentUser.name;
+          hideLoading();
+          loadRooms();
+          loadActiveGuests();
+          return;
+        }
+        failGate("No staff record. Contact HR.");
+        await signOut(auth);
+        return;
+      }
+      const data = staffDoc.data();
+      if (data.active === false && !isAdminEmail(user.email)) {
+        failGate("Account pending approval.");
+        await signOut(auth);
+        return;
+      }
+      const role = data.role;
+      if (role !== "frontdesk" && role !== "admin" && !isAdminEmail(user.email)) {
+        failGate("You do not have access to Front Desk.");
+        setTimeout(() => (window.location.href = "login.html"), 1200);
+        return;
+      }
+      currentUser = { uid: user.uid, name: data.name || user.email, role: isAdminEmail(user.email) ? "admin" : role };
+      document.getElementById("staffName").textContent = currentUser.name;
+      hideLoading();
+      loadRooms();
+      loadActiveGuests();
+    } catch (err) {
+      console.error(err);
+      failGate(err.message === "timeout" ? "Access check timed out. Check connection." : "Could not verify access.");
+    }
+  });
+
+  window.logout = () => {
+    try { sessionStorage.removeItem("enuana_staff"); } catch (_) {}
+    signOut(auth).then(() => (window.location.href = "login.html"));
+  };
+
+  // ================= AUDIT LOG HELPER =================
+  async function writeLog(action, detail) {
+    try {
+      await addDoc(collection(db, 'logs'), {
+        by: currentUser.name,
+        byUid: currentUser.uid,
+        module: 'frontdesk',
+        action,
+        detail,
+        timestamp: serverTimestamp()
+      });
+    } catch (e) {
+      console.error('Log write failed:', e);
+    }
+  }
+
+  // ================= ROOM GRID =================
+  const STATUS_STYLES = {
+    vacant:   { bg: 'bg-green-50',  border: 'border-green-200',  dot: 'bg-green-500',  label: 'Vacant' },
+    occupied: { bg: 'bg-red-50',    border: 'border-red-200',    dot: 'bg-red-500',    label: 'Occupied' },
+    reserved: { bg: 'bg-amber-50',  border: 'border-amber-200',  dot: 'bg-amber-500',  label: 'Reserved' },
+    dirty:    { bg: 'bg-gray-50',   border: 'border-gray-200',   dot: 'bg-gray-500',   label: 'Needs Cleaning' }
+  };
+
+  let roomsCache = {};
+
+  function loadRooms() {
+    onSnapshot(collection(db, 'rooms'), (snap) => {
+      const grid = document.getElementById('roomsGrid');
+      grid.innerHTML = '';
+      roomsCache = {};
+
+      const counts = { vacant: 0, occupied: 0, reserved: 0, dirty: 0 };
+
+      if (snap.empty) {
+        grid.innerHTML = '<p class="col-span-full text-sm text-brand-900/50">No rooms set up yet. Add rooms in the admin panel.</p>';
+        return;
+      }
+
+      snap.forEach((docSnap) => {
+        const room = { id: docSnap.id, ...docSnap.data() };
+        roomsCache[room.id] = room;
+        counts[room.status] = (counts[room.status] || 0) + 1;
+
+        const style = STATUS_STYLES[room.status] || STATUS_STYLES.vacant;
+        const card = document.createElement('div');
+        card.className = `rounded-xl border ${style.border} ${style.bg} p-4 fade-in cursor-pointer hover:shadow-md transition`;
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-serif text-lg">Room ${room.number}</span>
+            <span class="w-2.5 h-2.5 rounded-full ${style.dot}"></span>
+          </div>
+          <p class="text-xs text-brand-900/60 mb-1">${room.type || 'Standard'}</p>
+          <p class="text-xs font-semibold ${style.dot.replace('bg-', 'text-')}">${style.label}</p>
+        `;
+        card.addEventListener('click', () => handleRoomClick(room));
+        grid.appendChild(card);
+      });
+
+      document.getElementById('countVacant').textContent = counts.vacant || 0;
+      document.getElementById('countOccupied').textContent = counts.occupied || 0;
+      document.getElementById('countReserved').textContent = counts.reserved || 0;
+      document.getElementById('countDirty').textContent = counts.dirty || 0;
+    }, (err) => {
+      console.error(err);
+      document.getElementById('roomsGrid').innerHTML =
+        '<p class="col-span-full text-sm text-red-600">Could not load rooms. Check connection or permissions.</p>';
+    });
+  }
+
+  function handleRoomClick(room) {
+    if (room.status === 'vacant' || room.status === 'reserved') {
+      openCheckinModal(room);
+    } else if (room.status === 'occupied') {
+      openCheckoutForRoom(room);
+    } else if (room.status === 'dirty') {
+      markRoomClean(room);
+    }
+  }
+
+  async function markRoomClean(room) {
+    if (!confirm(`Mark Room ${room.number} as vacant/clean?`)) return;
+    await updateDoc(doc(db, 'rooms', room.id), { status: 'vacant' });
+    await writeLog('room_status_change', `Room ${room.number} marked clean/vacant`);
+  }
+
+  // ================= CHECK-IN =================
+  window.openCheckinModal = function(room) {
+    document.getElementById('checkinRoomId').value = room.id;
+    document.getElementById('checkinRoomLabel').textContent = `Room ${room.number} — ${room.type || 'Standard'}`;
+    document.getElementById('rate').value = room.defaultRate || '';
+    document.getElementById('checkinModal').classList.remove('hidden');
+    document.getElementById('checkinModal').classList.add('flex');
+  };
+  window.closeCheckinModal = function() {
+    document.getElementById('checkinModal').classList.add('hidden');
+    document.getElementById('checkinModal').classList.remove('flex');
+    document.getElementById('checkinForm').reset();
+    document.getElementById('checkinError').classList.add('hidden');
+  };
+
+  document.getElementById('checkinForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('checkinSubmitBtn');
+    const errorEl = document.getElementById('checkinError');
+    errorEl.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Checking in...';
+
+    const roomId = document.getElementById('checkinRoomId').value;
+    const room = roomsCache[roomId];
+
+    const checkinData = {
+      guestName: document.getElementById('guestName').value.trim(),
+      guestPhone: document.getElementById('guestPhone').value.trim(),
+      guestId: document.getElementById('guestId').value.trim(),
+      roomId,
+      roomNumber: room.number,
+      rate: Number(document.getElementById('rate').value),
+      deposit: Number(document.getElementById('deposit').value) || 0,
+      checkIn: serverTimestamp(),
+      expectedCheckout: document.getElementById('expectedCheckout').value,
+      checkOut: null,
+      status: 'active',
+      createdBy: currentUser.name
+    };
+
+    try {
+      await addDoc(collection(db, 'checkins'), checkinData);
+      await updateDoc(doc(db, 'rooms', roomId), { status: 'occupied' });
+      await writeLog('checkin', `${checkinData.guestName} checked into Room ${room.number}`);
+      closeCheckinModal();
+    } catch (err) {
+      console.error(err);
+      errorEl.textContent = 'Check-in failed. Check your connection and try again.';
+      errorEl.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Confirm Check-In';
+    }
+  });
+
+  // ================= ACTIVE GUESTS TABLE + CHECK-OUT =================
+  let activeCheckinsCache = {};
+
+  function loadActiveGuests() {
+    const q = query(collection(db, 'checkins'), where('status', '==', 'active'));
+    onSnapshot(q, (snap) => {
+      const tbody = document.getElementById('guestsTable');
+      tbody.innerHTML = '';
+      activeCheckinsCache = {};
+
+      if (snap.empty) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-brand-900/40">No active guests yet.</td></tr>';
+        return;
+      }
+
+      snap.forEach((docSnap) => {
+        const c = { id: docSnap.id, ...docSnap.data() };
+        activeCheckinsCache[c.id] = c;
+
+        const checkInDate = c.checkIn?.toDate ? c.checkIn.toDate().toLocaleDateString() : '—';
+        const row = document.createElement('tr');
+        row.className = 'border-t border-brand-100';
+        row.innerHTML = `
+          <td class="px-4 py-3">${c.guestName}</td>
+          <td class="px-4 py-3">Room ${c.roomNumber}</td>
+          <td class="px-4 py-3">${checkInDate}</td>
+          <td class="px-4 py-3">${c.expectedCheckout || '—'}</td>
+          <td class="px-4 py-3">₦${(c.rate - c.deposit).toLocaleString()}</td>
+          <td class="px-4 py-3 text-right space-x-3">
+            <a href="bill.html?id=${c.id}" target="_blank" rel="noopener" class="text-brand-900/50 hover:text-brand-900 text-xs underline">
+              Guest Bill
+            </a>
+            <button class="text-brand-400 hover:text-brand-600 font-semibold text-xs" data-checkout-id="${c.id}">
+              Check Out
+            </button>
+          </td>
+        `;
+        row.querySelector('[data-checkout-id]').addEventListener('click', () => openCheckoutModal(c));
+        tbody.appendChild(row);
+      });
+    });
+  }
+
+  function openCheckoutForRoom(room) {
+    const checkin = Object.values(activeCheckinsCache).find(c => c.roomId === room.id);
+    if (checkin) openCheckoutModal(checkin);
+  }
+
+  let checkoutTarget = null;
+
+  window.openCheckoutModal = function(checkin) {
+    checkoutTarget = checkin;
+    const checkInDate = checkin.checkIn?.toDate ? checkin.checkIn.toDate() : new Date();
+    const nights = Math.max(1, Math.ceil((new Date() - checkInDate) / (1000 * 60 * 60 * 24)));
+    const total = checkin.rate * nights;
+    const balance = total - checkin.deposit;
+
+    document.getElementById('checkoutGuestLabel').textContent = `${checkin.guestName} — Room ${checkin.roomNumber}`;
+    document.getElementById('checkoutNights').textContent = nights;
+    document.getElementById('checkoutTotal').textContent = `₦${total.toLocaleString()}`;
+    document.getElementById('checkoutDeposit').textContent = `₦${checkin.deposit.toLocaleString()}`;
+    document.getElementById('checkoutBalance').textContent = `₦${balance.toLocaleString()}`;
+    document.getElementById('balanceSettled').checked = false;
+
+    document.getElementById('checkoutModal').classList.remove('hidden');
+    document.getElementById('checkoutModal').classList.add('flex');
+  };
+  window.closeCheckoutModal = function() {
+    document.getElementById('checkoutModal').classList.add('hidden');
+    document.getElementById('checkoutModal').classList.remove('flex');
+    checkoutTarget = null;
+  };
+
+  function printReceipt(checkin) {
+    const checkInDate = checkin.checkIn?.toDate ? checkin.checkIn.toDate() : new Date();
+    const nights = Math.max(1, Math.ceil((new Date() - checkInDate) / (1000 * 60 * 60 * 24)));
+    const total = checkin.rate * nights;
+    const balance = total - checkin.deposit;
+    const win = window.open('', '_blank', 'width=380,height=600');
+    win.document.write(`
+      <html><head><title>Receipt — ${checkin.guestName}</title>
+      <style>
+        body { font-family: Georgia, serif; padding: 24px; color: #241310; }
+        h1 { font-size: 18px; margin-bottom: 0; }
+        p.sub { color: #7a4531; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+        td { padding: 6px 0; }
+        .total-row td { border-top: 1px solid #a8654a; font-weight: bold; padding-top: 10px; }
+        .footer { margin-top: 24px; font-size: 11px; text-align: center; color: #7a4531; }
+      </style></head>
+      <body>
+        <h1>Enuana Hotels &amp; Suites</h1>
+        <p class="sub">Payment Receipt</p>
+        <table>
+          <tr><td>Guest</td><td style="text-align:right">${checkin.guestName}</td></tr>
+          <tr><td>Room</td><td style="text-align:right">Room ${checkin.roomNumber}</td></tr>
+          <tr><td>Nights</td><td style="text-align:right">${nights}</td></tr>
+          <tr><td>Rate/night</td><td style="text-align:right">₦${checkin.rate.toLocaleString()}</td></tr>
+          <tr><td>Deposit Paid</td><td style="text-align:right">₦${checkin.deposit.toLocaleString()}</td></tr>
+          <tr class="total-row"><td>Total Bill</td><td style="text-align:right">₦${total.toLocaleString()}</td></tr>
+          <tr><td>Balance Settled</td><td style="text-align:right">₦${balance.toLocaleString()}</td></tr>
+        </table>
+        <p class="footer">A &amp; K Avenue Road GRA, Toru-Orua, Bayelsa State<br>Thank you for staying with us.</p>
+      </body></html>
+    `);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 300);
+  }
+
+  window.confirmCheckout = async function() {
+    if (!checkoutTarget) return;
+    const settled = document.getElementById('balanceSettled').checked;
+    if (!settled) {
+      if (!confirm('Balance not marked as settled. Proceed with check-out anyway? This will be flagged in the audit log.')) {
+        return;
+      }
+    }
+
+    const btn = document.getElementById('checkoutSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+
+    try {
+      await updateDoc(doc(db, 'checkins', checkoutTarget.id), {
+        status: 'completed',
+        checkOut: serverTimestamp(),
+        balanceSettledAtCheckout: settled
+      });
+      await updateDoc(doc(db, 'rooms', checkoutTarget.roomId), { status: 'dirty' });
+      await writeLog(
+        'checkout',
+        `${checkoutTarget.guestName} checked out of Room ${checkoutTarget.roomNumber}${settled ? '' : ' — BALANCE NOT SETTLED'}`
+      );
+      printReceipt(checkoutTarget);
+      closeCheckoutModal();
+    } catch (err) {
+      console.error(err);
+      alert('Check-out failed. Check your connection and try again.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Confirm Check-Out';
+    }
+  };
+</script>
+
+</body>
+  </html>
