@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Your Bill | Enuana Hotels & Suites</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='19' fill='%23a8654a'/%3E%3Cpath d='M11 24 L20 15 L29 24' stroke='%23f2e6df' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ctext x='20' y='28' text-anchor='middle' font-family='Georgia,serif' font-size='14' fill='%23f2e6df' font-weight='bold'%3EE%3C/text%3E%3C/svg%3E" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            50: '#faf6f4', 100: '#f2e6df', 200: '#e2c4b5',
+            400: '#a8654a', 600: '#7a4531', 700: '#5c3325',
+            800: '#3d2118', 900: '#241310'
+          }
+        },
+        fontFamily: { serif: ['Georgia', 'Cambria', 'serif'] }
+      }
+    }
+  }
+</script>
+</head>
+<body class="bg-brand-50 text-brand-900 min-h-screen flex items-center justify-center px-4 py-10">
+
+<div class="w-full max-w-sm">
+  <div class="text-center mb-6 flex flex-col items-center">
+    <svg width="48" height="48" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Enuana Hotels & Suites logo" class="mb-3">
+      <circle cx="20" cy="20" r="19" fill="#a8654a" stroke="#f2e6df" stroke-width="1.5"/>
+      <path d="M11 24 L20 15 L29 24" stroke="#f2e6df" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="20" y="27" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#f2e6df" font-weight="bold">E</text>
+    </svg>
+    <h1 class="font-serif text-2xl">Enuana Hotels &amp; Suites</h1>
+    <p class="text-xs uppercase tracking-widest text-brand-400">Your Live Bill</p>
+  </div>
+
+  <div id="billCard" class="bg-white rounded-2xl border border-brand-100 p-6 shadow-sm">
+    <p id="loadingMsg" class="text-sm text-brand-900/50 text-center">Loading your bill...</p>
+  </div>
+
+  <p class="text-xs text-brand-900/40 text-center mt-6">
+    Questions about your bill? Call
+    <a href="tel:+2348122198603" class="text-brand-400 hover:underline">0812 219 8603</a>
+  </p>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7ty4-tgDn3iQNchRmCDn7lO14kgem10o",
+    authDomain: "mcode-expiring.firebaseapp.com",
+    projectId: "mcode-expiring",
+    storageBucket: "mcode-expiring.firebasestorage.app",
+    messagingSenderId: "755995268786",
+    appId: "1:755995268786:web:d961cf7836f51a0c0e9bab",
+    measurementId: "G-6TRLRCVLJM"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const params = new URLSearchParams(window.location.search);
+  const checkinId = params.get('id');
+  const billCard = document.getElementById('billCard');
+
+  if (!checkinId) {
+    billCard.innerHTML = '<p class="text-sm text-red-600 text-center">No booking reference found in this link.</p>';
+  } else {
+    // Live-updates automatically if front desk adjusts the rate or adds nights.
+    onSnapshot(doc(db, 'checkins', checkinId), (snap) => {
+      if (!snap.exists()) {
+        billCard.innerHTML = '<p class="text-sm text-red-600 text-center">We could not find this booking. Please check with front desk.</p>';
+        return;
+      }
+      const c = snap.data();
+      const checkInDate = c.checkIn?.toDate ? c.checkIn.toDate() : new Date();
+      const nights = c.checkOut
+        ? Math.max(1, Math.ceil((c.checkOut.toDate() - checkInDate) / (1000 * 60 * 60 * 24)))
+        : Math.max(1, Math.ceil((new Date() - checkInDate) / (1000 * 60 * 60 * 24)));
+      const total = (c.rate || 0) * nights;
+      const balance = total - (c.deposit || 0);
+      const stillActive = c.status === 'active';
+
+      billCard.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <p class="font-serif text-xl">${c.guestName}</p>
+            <p class="text-xs text-brand-900/50">Room ${c.roomNumber}</p>
+          </div>
+          <span class="text-xs px-2 py-1 rounded-full ${stillActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}">
+            ${stillActive ? 'Currently Staying' : 'Checked Out'}
+          </span>
+        </div>
+        <div class="space-y-2 text-sm border-t border-brand-100 pt-4">
+          <div class="flex justify-between"><span class="text-brand-900/60">Nights ${stillActive ? 'so far' : 'stayed'}</span><span>${nights}</span></div>
+          <div class="flex justify-between"><span class="text-brand-900/60">Rate / night</span><span>₦${(c.rate || 0).toLocaleString()}</span></div>
+          <div class="flex justify-between"><span class="text-brand-900/60">Running Total</span><span>₦${total.toLocaleString()}</span></div>
+          <div class="flex justify-between"><span class="text-brand-900/60">Deposit Paid</span><span>₦${(c.deposit || 0).toLocaleString()}</span></div>
+          <div class="flex justify-between font-semibold border-t border-brand-200 pt-2 mt-2">
+            <span>Balance ${stillActive ? 'Due So Far' : 'Settled'}</span><span>₦${balance.toLocaleString()}</span>
+          </div>
+        </div>
+        ${stillActive ? '<p class="text-xs text-brand-900/40 mt-4 text-center">This updates live — check back anytime before you check out.</p>' : ''}
+      `;
+    }, (err) => {
+      console.error(err);
+      billCard.innerHTML = '<p class="text-sm text-red-600 text-center">Could not load your bill right now. Please try again.</p>';
+    });
+  }
+</script>
+
+</body>
+        </html>
