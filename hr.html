@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HR | Enuana Hotels & Suites</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='19' fill='%23a8654a'/%3E%3Cpath d='M11 24 L20 15 L29 24' stroke='%23f2e6df' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ctext x='20' y='28' text-anchor='middle' font-family='Georgia,serif' font-size='14' fill='%23f2e6df' font-weight='bold'%3EE%3C/text%3E%3C/svg%3E" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            50: '#faf6f4', 100: '#f2e6df', 200: '#e2c4b5',
+            400: '#a8654a', 600: '#7a4531', 700: '#5c3325',
+            800: '#3d2118', 900: '#241310'
+          }
+        },
+        fontFamily: { serif: ['Georgia', 'Cambria', 'serif'] }
+      }
+    }
+  }
+</script>
+<style>
+  .fade-in { animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+  #loadingScreen { transition: opacity 0.3s ease; }
+  .tab-active { border-bottom: 2px solid #a8654a; color: #a8654a; font-weight: 600; }
+</style>
+</head>
+<body class="bg-brand-50 text-brand-900">
+
+<div id="loadingScreen" class="fixed inset-0 bg-brand-900 z-[100] flex items-center justify-center">
+  <p class="text-white text-sm">Checking access...</p>
+</div>
+
+<!-- ===================== NAV ===================== -->
+<header class="bg-brand-800 text-white">
+  <div class="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg width="34" height="34" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Enuana Hotels & Suites logo" class="shrink-0">
+        <circle cx="20" cy="20" r="19" fill="#a8654a" stroke="#f2e6df" stroke-width="1.5"/>
+        <path d="M11 24 L20 15 L29 24" stroke="#f2e6df" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="20" y="27" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#f2e6df" font-weight="bold">E</text>
+      </svg>
+      <!-- TODO: replace the SVG monogram above with <img src="logo.png" class="h-9 w-9 rounded-full" alt="Enuana Hotels & Suites logo"> once you export the real hotel logo (no logo image file was included in your upload). -->
+      <span class="font-serif text-lg">Enuana</span>
+      <span class="text-xs uppercase tracking-widest text-brand-200">HR</span>
+    </div>
+    <div class="flex items-center gap-4 text-sm">
+      <span id="staffName" class="text-brand-200"></span>
+      <button onclick="logout()" class="bg-brand-700 hover:bg-brand-600 px-4 py-1.5 rounded-full transition">Sign Out</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-5 py-8">
+
+  <!-- Tabs -->
+  <div class="flex gap-6 border-b border-brand-200 mb-8 text-sm">
+    <button class="tab-btn pb-3 tab-active" data-tab="staff">Staff Directory</button>
+    <button class="tab-btn pb-3 text-brand-900/50" data-tab="attendance">Attendance</button>
+    <button class="tab-btn pb-3 text-brand-900/50" data-tab="leave">Leave Requests</button>
+  </div>
+
+  <!-- ============ STAFF DIRECTORY TAB ============ -->
+  <section id="tab-staff">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-serif text-2xl">Staff Directory</h2>
+      <button onclick="openStaffModal()" class="bg-brand-400 hover:bg-brand-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition">
+        + Add Staff
+      </button>
+    </div>
+    <div class="bg-white rounded-xl border border-brand-100 overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-brand-100/60 text-brand-900/70 text-left">
+          <tr>
+            <th class="px-4 py-3">Name</th>
+            <th class="px-4 py-3">Email</th>
+            <th class="px-4 py-3">Phone</th>
+            <th class="px-4 py-3">Role</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
+        <tbody id="staffTable">
+          <tr><td colspan="6" class="px-4 py-6 text-center text-brand-900/40">Loading staff...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ ATTENDANCE TAB ============ -->
+  <section id="tab-attendance" class="hidden">
+    <div class="bg-white rounded-xl border border-brand-100 p-5 mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="text-sm text-brand-900/60">Your status today</p>
+        <p id="myAttendanceStatus" class="font-serif text-xl">Not clocked in</p>
+      </div>
+      <div class="flex gap-3">
+        <button id="clockInBtn" onclick="clockIn()" class="bg-brand-400 hover:bg-brand-600 text-white font-semibold px-6 py-2.5 rounded-full transition">
+          Clock In
+        </button>
+        <button id="clockOutBtn" onclick="clockOut()" disabled class="bg-brand-200 text-brand-900/40 font-semibold px-6 py-2.5 rounded-full transition cursor-not-allowed">
+          Clock Out
+        </button>
+      </div>
+    </div>
+
+    <h3 class="font-serif text-xl mb-3">Today's Attendance</h3>
+    <div class="bg-white rounded-xl border border-brand-100 overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-brand-100/60 text-brand-900/70 text-left">
+          <tr>
+            <th class="px-4 py-3">Staff</th>
+            <th class="px-4 py-3">Clock In</th>
+            <th class="px-4 py-3">Clock Out</th>
+            <th class="px-4 py-3">Hours</th>
+          </tr>
+        </thead>
+        <tbody id="attendanceTable">
+          <tr><td colspan="4" class="px-4 py-6 text-center text-brand-900/40">No attendance records for today yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ LEAVE TAB ============ -->
+  <section id="tab-leave" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-serif text-2xl">Leave Requests</h2>
+      <button onclick="openLeaveModal()" class="bg-brand-400 hover:bg-brand-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition">
+        + Request Leave
+      </button>
+    </div>
+    <div class="bg-white rounded-xl border border-brand-100 overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-brand-100/60 text-brand-900/70 text-left">
+          <tr>
+            <th class="px-4 py-3">Staff</th>
+            <th class="px-4 py-3">From</th>
+            <th class="px-4 py-3">To</th>
+            <th class="px-4 py-3">Reason</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
+        <tbody id="leaveTable">
+          <tr><td colspan="6" class="px-4 py-6 text-center text-brand-900/40">No leave requests yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== ADD/EDIT STAFF MODAL ===================== -->
+<div id="staffModal" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center px-4">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 relative fade-in">
+    <button onclick="closeStaffModal()" class="absolute top-4 right-4 text-brand-900/50 hover:text-brand-900">✕</button>
+    <h3 id="staffModalTitle" class="font-serif text-2xl mb-5">Add Staff Member</h3>
+    <form id="staffForm" class="space-y-3">
+      <input type="hidden" id="staffDocId" />
+      <input type="text" id="staffFullName" placeholder="Full Name" required
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      <input type="email" id="staffEmail" placeholder="Email (used for login)" required
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      <input type="tel" id="staffPhone" placeholder="Phone Number"
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      <select id="staffRole" required
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400">
+        <option value="">Select Role</option>
+        <option value="frontdesk">Front Desk</option>
+        <option value="hr">HR</option>
+        <option value="accounts">Accounts</option>
+        <option value="admin">Admin</option>
+      </select>
+      <label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" id="staffActive" checked class="rounded" />
+        Active
+      </label>
+      <p id="staffModalNote" class="text-xs text-brand-900/50 bg-brand-50 rounded-lg px-3 py-2">
+        Note: adding a record here does not create their login. Create the Firebase Auth account separately (Firebase Console or an admin sign-up flow), using the same email, then their role takes effect on next login.
+      </p>
+      <p id="staffError" class="hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></p>
+      <button type="submit" id="staffSubmitBtn"
+        class="w-full bg-brand-400 hover:bg-brand-600 text-white font-semibold py-3 rounded-full transition">
+        Save Staff Member
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== LEAVE REQUEST MODAL ===================== -->
+<div id="leaveModal" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center px-4">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 relative fade-in">
+    <button onclick="closeLeaveModal()" class="absolute top-4 right-4 text-brand-900/50 hover:text-brand-900">✕</button>
+    <h3 class="font-serif text-2xl mb-5">Request Leave</h3>
+    <form id="leaveForm" class="space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-brand-900/60">From</label>
+          <input type="date" id="leaveFrom" required class="w-full px-3 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+        </div>
+        <div>
+          <label class="text-xs text-brand-900/60">To</label>
+          <input type="date" id="leaveTo" required class="w-full px-3 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+        </div>
+      </div>
+      <textarea id="leaveReason" rows="3" placeholder="Reason for leave" required
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400"></textarea>
+      <button type="submit" class="w-full bg-brand-400 hover:bg-brand-600 text-white font-semibold py-3 rounded-full transition">
+        Submit Request
+      </button>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, collection, onSnapshot, query, where,
+    addDoc, updateDoc, serverTimestamp, Timestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // ================= FIREBASE CONFIG =================
+  // TODO: paste the real enuana-hms config here (same one used across all modules)
+  const firebaseConfig = {
+  apiKey: "AIzaSyD7ty4-tgDn3iQNchRmCDn7lO14kgem10o",
+  authDomain: "mcode-expiring.firebaseapp.com",
+  projectId: "mcode-expiring",
+  storageBucket: "mcode-expiring.firebasestorage.app",
+  messagingSenderId: "755995268786",
+  appId: "1:755995268786:web:d961cf7836f51a0c0e9bab",
+  measurementId: "G-6TRLRCVLJM"
+};
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const ALLOWED_ADMIN_EMAILS = [
+    "onyekamiracle08@gmail.com",
+    "onyekaudechukwum@gmail.com",
+    "replace_with_third_admin_email@example.com"
+  ];
+  const isAdminEmail = (e) => ALLOWED_ADMIN_EMAILS.includes((e || "").toLowerCase().trim());
+
+  function hideLoading() {
+    const el = document.getElementById("loadingScreen");
+    if (!el) return;
+    el.style.opacity = "0";
+    setTimeout(() => el.remove(), 250);
+  }
+  function failGate(msg) {
+    const el = document.getElementById("loadingScreen");
+    if (el) {
+      el.innerHTML = `<p class="text-white text-sm text-center px-6">${msg}</p>
+        <button type="button" onclick="location.href='login.html'" class="mt-4 bg-brand-400 text-white px-5 py-2 rounded-full text-sm">Back to Login</button>`;
+    }
+  }
+  async function withTimeout(p, ms = 6000) {
+    return Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error("timeout")), ms))]);
+  }
+
+  let currentUser = null;
+  let isAdminOrHR = false;
+
+  // ================= ROLE GUARD =================
+  onAuthStateChanged(auth, async (user) => {
+    try {
+      if (!user) {
+        window.location.replace("login.html");
+        return;
+      }
+      const staffDoc = await withTimeout(getDoc(doc(db, "staff", user.uid)));
+      if (!staffDoc.exists()) {
+        if (isAdminEmail(user.email)) {
+          currentUser = { uid: user.uid, name: user.email.split("@")[0], role: "admin" };
+          isAdminOrHR = true;
+          document.getElementById("staffName").textContent = currentUser.name;
+          hideLoading();
+          loadStaff();
+          loadTodayAttendance();
+          loadMyAttendanceStatus();
+          loadLeaveRequests();
+          return;
+        }
+        failGate("No staff record. Contact Admin.");
+        await signOut(auth);
+        return;
+      }
+      const data = staffDoc.data();
+      if (data.active === false && !isAdminEmail(user.email)) {
+        failGate("Account pending approval.");
+        await signOut(auth);
+        return;
+      }
+      const role = data.role;
+      if (role !== "hr" && role !== "admin" && !isAdminEmail(user.email)) {
+        failGate("You do not have access to HR.");
+        setTimeout(() => (window.location.href = "login.html"), 1200);
+        return;
+      }
+      isAdminOrHR = true;
+      currentUser = { uid: user.uid, name: data.name || user.email, role: isAdminEmail(user.email) ? "admin" : role };
+      document.getElementById("staffName").textContent = currentUser.name;
+      hideLoading();
+      loadStaff();
+      loadTodayAttendance();
+      loadMyAttendanceStatus();
+      loadLeaveRequests();
+    } catch (err) {
+      console.error(err);
+      failGate(err.message === "timeout" ? "Access check timed out. Check connection." : "Could not verify access.");
+    }
+  });
+
+  window.logout = () => {
+    try { sessionStorage.removeItem("enuana_staff"); } catch (_) {}
+    signOut(auth).then(() => (window.location.href = "login.html"));
+  };
+
+  // ================= AUDIT LOG =================
+  async function writeLog(action, detail) {
+    try {
+      await addDoc(collection(db, 'logs'), {
+        by: currentUser.name, byUid: currentUser.uid, module: 'hr',
+        action, detail, timestamp: serverTimestamp()
+      });
+    } catch (e) { console.error('Log write failed:', e); }
+  }
+
+  // ================= TABS =================
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('tab-active');
+        b.classList.add('text-brand-900/50');
+      });
+      btn.classList.add('tab-active');
+      btn.classList.remove('text-brand-900/50');
+
+      ['staff', 'attendance', 'leave'].forEach(name => {
+        document.getElementById(`tab-${name}`).classList.toggle('hidden', name !== btn.dataset.tab);
+      });
+    });
+  });
+
+  // ================= STAFF DIRECTORY =================
+  const ROLE_LABELS = { frontdesk: 'Front Desk', hr: 'HR', accounts: 'Accounts', admin: 'Admin' };
+  let staffCache = {};
+
+  function loadStaff() {
+    onSnapshot(collection(db, 'staff'), (snap) => {
+      const tbody = document.getElementById('staffTable');
+      tbody.innerHTML = '';
+      staffCache = {};
+
+      if (snap.empty) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-brand-900/40">No staff added yet.</td></tr>';
+        return;
+      }
+
+      snap.forEach((docSnap) => {
+        const s = { id: docSnap.id, ...docSnap.data() };
+        staffCache[s.id] = s;
+        const row = document.createElement('tr');
+        row.className = 'border-t border-brand-100';
+        row.innerHTML = `
+          <td class="px-4 py-3">${s.name || '—'}</td>
+          <td class="px-4 py-3">${s.email || '—'}</td>
+          <td class="px-4 py-3">${s.phone || '—'}</td>
+          <td class="px-4 py-3">${ROLE_LABELS[s.role] || s.role}</td>
+          <td class="px-4 py-3">
+            <span class="text-xs px-2 py-1 rounded-full ${s.active === false ? 'bg-gray-100 text-gray-600' : 'bg-green-100 text-green-700'}">
+              ${s.active === false ? 'Inactive' : 'Active'}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-right">
+            <button class="text-brand-400 hover:text-brand-600 font-semibold text-xs" data-edit-id="${s.id}">Edit</button>
+          </td>
+        `;
+        row.querySelector('[data-edit-id]').addEventListener('click', () => openStaffModal(s));
+        tbody.appendChild(row);
+      });
+    });
+  }
+
+  window.openStaffModal = function(staff = null) {
+    document.getElementById('staffError').classList.add('hidden');
+    document.getElementById('staffForm').reset();
+    if (staff) {
+      document.getElementById('staffModalTitle').textContent = 'Edit Staff Member';
+      document.getElementById('staffDocId').value = staff.id;
+      document.getElementById('staffFullName').value = staff.name || '';
+      document.getElementById('staffEmail').value = staff.email || '';
+      document.getElementById('staffPhone').value = staff.phone || '';
+      document.getElementById('staffRole').value = staff.role || '';
+      document.getElementById('staffActive').checked = staff.active !== false;
+      document.getElementById('staffModalNote').classList.add('hidden');
+    } else {
+      document.getElementById('staffModalTitle').textContent = 'Add Staff Member';
+      document.getElementById('staffDocId').value = '';
+      document.getElementById('staffModalNote').classList.remove('hidden');
+    }
+    document.getElementById('staffModal').classList.remove('hidden');
+    document.getElementById('staffModal').classList.add('flex');
+  };
+  window.closeStaffModal = function() {
+    document.getElementById('staffModal').classList.add('hidden');
+    document.getElementById('staffModal').classList.remove('flex');
+  };
+
+  document.getElementById('staffForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('staffSubmitBtn');
+    const errorEl = document.getElementById('staffError');
+    errorEl.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    const docId = document.getElementById('staffDocId').value;
+    const data = {
+      name: document.getElementById('staffFullName').value.trim(),
+      email: document.getElementById('staffEmail').value.trim(),
+      phone: document.getElementById('staffPhone').value.trim(),
+      role: document.getElementById('staffRole').value,
+      active: document.getElementById('staffActive').checked
+    };
+
+    try {
+      if (docId) {
+        // Editing existing staff record
+        await updateDoc(doc(db, 'staff', docId), data);
+        await writeLog('staff_update', `Updated staff record: ${data.name}`);
+      } else {
+        // New staff record — NOTE: this creates the Firestore profile only.
+        // The Firebase Auth account (for login) must be created separately with a matching email,
+        // since client-side code shouldn't be creating arbitrary Auth users directly.
+        // The doc ID here is a placeholder; once the real Auth UID exists, this doc should be
+        // re-keyed to that UID (e.g. via a small admin Cloud Function) so login.html's
+        // staff/{uid} lookup works correctly.
+        await addDoc(collection(db, 'staff'), data);
+        await writeLog('staff_create', `Added new staff record: ${data.name} (${data.role})`);
+      }
+      closeStaffModal();
+    } catch (err) {
+      console.error(err);
+      errorEl.textContent = 'Could not save staff record. Please try again.';
+      errorEl.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save Staff Member';
+    }
+  });
+
+  // ================= ATTENDANCE =================
+  function todayDateString() {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  let myAttendanceDocId = null;
+
+  function loadMyAttendanceStatus() {
+    const q = query(
+      collection(db, 'attendance'),
+      where('staffUid', '==', currentUser.uid),
+      where('date', '==', todayDateString())
+    );
+    onSnapshot(q, (snap) => {
+      if (snap.empty) {
+        myAttendanceDocId = null;
+        document.getElementById('myAttendanceStatus').textContent = 'Not clocked in';
+        document.getElementById('clockInBtn').disabled = false;
+        document.getElementById('clockInBtn').classList.remove('opacity-50');
+        setClockOutEnabled(false);
+        return;
+      }
+      const record = snap.docs[0];
+      myAttendanceDocId = record.id;
+      const data = record.data();
+      if (data.clockOut) {
+        document.getElementById('myAttendanceStatus').textContent = 'Clocked out for today';
+        document.getElementById('clockInBtn').disabled = true;
+        document.getElementById('clockInBtn').classList.add('opacity-50');
+        setClockOutEnabled(false);
+      } else {
+        document.getElementById('myAttendanceStatus').textContent = 'Clocked in';
+        document.getElementById('clockInBtn').disabled = true;
+        document.getElementById('clockInBtn').classList.add('opacity-50');
+        setClockOutEnabled(true);
+      }
+    });
+  }
+
+  function setClockOutEnabled(enabled) {
+    const btn = document.getElementById('clockOutBtn');
+    btn.disabled = !enabled;
+    btn.classList.toggle('bg-brand-200', !enabled);
+    btn.classList.toggle('text-brand-900/40', !enabled);
+    btn.classList.toggle('cursor-not-allowed', !enabled);
+    btn.classList.toggle('bg-brand-400', enabled);
+    btn.classList.toggle('hover:bg-brand-600', enabled);
+    btn.classList.toggle('text-white', enabled);
+  }
+
+  window.clockIn = async function() {
+    try {
+      await addDoc(collection(db, 'attendance'), {
+        staffUid: currentUser.uid,
+        staffName: currentUser.name,
+        date: todayDateString(),
+        clockIn: serverTimestamp(),
+        clockOut: null
+      });
+      await writeLog('clock_in', `${currentUser.name} clocked in`);
+    } catch (err) {
+      console.error(err);
+      alert('Clock-in failed. Try again.');
+    }
+  };
+
+  window.clockOut = async function() {
+    if (!myAttendanceDocId) return;
+    try {
+      await updateDoc(doc(db, 'attendance', myAttendanceDocId), {
+        clockOut: serverTimestamp()
+      });
+      await writeLog('clock_out', `${currentUser.name} clocked out`);
+    } catch (err) {
+      console.error(err);
+      alert('Clock-out failed. Try again.');
+    }
+  };
+
+  function loadTodayAttendance() {
+    const q = query(collection(db, 'attendance'), where('date', '==', todayDateString()));
+    onSnapshot(q, (snap) => {
+      const tbody = document.getElementById('attendanceTable');
+      tbody.innerHTML = '';
+
+      if (snap.empty) {
+        tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-6 text-center text-brand-900/40">No attendance records for today yet.</td></tr>';
+        return;
+      }
+
+      snap.forEach((docSnap) => {
+        const a = docSnap.data();
+        const inTime = a.clockIn?.toDate ? a.clockIn.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+        const outTime = a.clockOut?.toDate ? a.clockOut.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+        let hours = '—';
+        if (a.clockIn?.toDate && a.clockOut?.toDate) {
+          const diffMs = a.clockOut.toDate() - a.clockIn.toDate();
+          hours = (diffMs / (1000 * 60 * 60)).toFixed(1) + ' hrs';
+        }
+        const row = document.createElement('tr');
+        row.className = 'border-t border-brand-100';
+        row.innerHTML = `
+          <td class="px-4 py-3">${a.staffName}</td>
+          <td class="px-4 py-3">${inTime}</td>
+          <td class="px-4 py-3">${outTime}</td>
+          <td class="px-4 py-3">${hours}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    });
+  }
+
+  // ================= LEAVE REQUESTS =================
+  window.openLeaveModal = function() {
+    document.getElementById('leaveForm').reset();
+    document.getElementById('leaveModal').classList.remove('hidden');
+    document.getElementById('leaveModal').classList.add('flex');
+  };
+  window.closeLeaveModal = function() {
+    document.getElementById('leaveModal').classList.add('hidden');
+    document.getElementById('leaveModal').classList.remove('flex');
+  };
+
+  document.getElementById('leaveForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await addDoc(collection(db, 'leaveRequests'), {
+        staffUid: currentUser.uid,
+        staffName: currentUser.name,
+        from: document.getElementById('leaveFrom').value,
+        to: document.getElementById('leaveTo').value,
+        reason: document.getElementById('leaveReason').value.trim(),
+        status: 'pending',
+        requestedAt: serverTimestamp()
+      });
+      await writeLog('leave_request', `${currentUser.name} requested leave (${document.getElementById('leaveFrom').value} to ${document.getElementById('leaveTo').value})`);
+      closeLeaveModal();
+    } catch (err) {
+      console.error(err);
+      alert('Could not submit leave request. Try again.');
+    }
+  });
+
+  const STATUS_BADGE = {
+    pending: 'bg-amber-100 text-amber-700',
+    approved: 'bg-green-100 text-green-700',
+    declined: 'bg-red-100 text-red-700'
+  };
+
+  function loadLeaveRequests() {
+    onSnapshot(collection(db, 'leaveRequests'), (snap) => {
+      const tbody = document.getElementById('leaveTable');
+      tbody.innerHTML = '';
+
+      if (snap.empty) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-brand-900/40">No leave requests yet.</td></tr>';
+        return;
+      }
+
+      snap.forEach((docSnap) => {
+        const l = { id: docSnap.id, ...docSnap.data() };
+        const row = document.createElement('tr');
+        row.className = 'border-t border-brand-100';
+        const canDecide = l.status === 'pending' && (currentUser.role === 'hr' || currentUser.role === 'admin');
+        row.innerHTML = `
+          <td class="px-4 py-3">${l.staffName}</td>
+          <td class="px-4 py-3">${l.from}</td>
+          <td class="px-4 py-3">${l.to}</td>
+          <td class="px-4 py-3">${l.reason}</td>
+          <td class="px-4 py-3">
+            <span class="text-xs px-2 py-1 rounded-full ${STATUS_BADGE[l.status] || 'bg-gray-100 text-gray-600'}">
+              ${l.status.charAt(0).toUpperCase() + l.status.slice(1)}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-right space-x-2">
+            ${canDecide ? `
+              <button class="text-green-600 hover:text-green-700 font-semibold text-xs" data-approve-id="${l.id}">Approve</button>
+              <button class="text-red-600 hover:text-red-700 font-semibold text-xs" data-decline-id="${l.id}">Decline</button>
+            ` : ''}
+          </td>
+        `;
+        if (canDecide) {
+          row.querySelector('[data-approve-id]').addEventListener('click', () => decideLeave(l, 'approved'));
+          row.querySelector('[data-decline-id]').addEventListener('click', () => decideLeave(l, 'declined'));
+        }
+        tbody.appendChild(row);
+      });
+    });
+  }
+
+  async function decideLeave(leave, decision) {
+    try {
+      await updateDoc(doc(db, 'leaveRequests', leave.id), {
+        status: decision,
+        decidedBy: currentUser.name,
+        decidedAt: serverTimestamp()
+      });
+      await writeLog('leave_decision', `${leave.staffName}'s leave request (${leave.from} to ${leave.to}) was ${decision} by ${currentUser.name}`);
+    } catch (err) {
+      console.error(err);
+      alert('Could not update leave request. Try again.');
+    }
+  }
+</script>
+
+</body>
+  </html>
