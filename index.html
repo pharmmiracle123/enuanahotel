@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Enuana Hotels & Suites | Toru-Orua, Bayelsa</title>
+<meta name="description" content="Enuana Hotels & Suites — Restaurant, Bar, Swimming Pool, Free WiFi, 24/7 Power. A&K Avenue Road GRA, Toru-Orua, Bayelsa State." />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='19' fill='%23a8654a'/%3E%3Cpath d='M11 24 L20 15 L29 24' stroke='%23f2e6df' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ctext x='20' y='28' text-anchor='middle' font-family='Georgia,serif' font-size='14' fill='%23f2e6df' font-weight='bold'%3EE%3C/text%3E%3C/svg%3E" />
+<meta property="og:title" content="Enuana Hotels & Suites" />
+<meta property="og:description" content="Restaurant, Bar, Swimming Pool, Free WiFi, 24/7 Power — Toru-Orua, Bayelsa State." />
+<meta property="og:type" content="website" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Hotel",
+  "name": "Enuana Hotels & Suites",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "A & K Avenue Road, GRA",
+    "addressLocality": "Toru-Orua",
+    "addressRegion": "Bayelsa State",
+    "addressCountry": "NG"
+  },
+  "telephone": ["+2348122198603", "+2349138726689"],
+  "amenityFeature": [
+    { "@type": "LocationFeatureSpecification", "name": "Free WiFi" },
+    { "@type": "LocationFeatureSpecification", "name": "24-hour Power Supply" },
+    { "@type": "LocationFeatureSpecification", "name": "Swimming Pool" },
+    { "@type": "LocationFeatureSpecification", "name": "Restaurant" },
+    { "@type": "LocationFeatureSpecification", "name": "Bar" }
+  ]
+}
+</script>
+<!-- TODO: the schema.org block above helps Google show rich hotel results and,
+     over time, free booking links — fill in real geo coordinates and a
+     starRating once available for even better search visibility. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            50: '#faf6f4',
+            100: '#f2e6df',
+            200: '#e2c4b5',
+            300: '#cf9d81',
+            400: '#a8654a',
+            600: '#7a4531',
+            700: '#5c3325',
+            800: '#3d2118',
+            900: '#241310'
+          }
+        },
+        fontFamily: {
+          serif: ['"Playfair Display"', 'Georgia', 'serif'],
+          sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; }
+  .hero-overlay {
+    background: linear-gradient(180deg, rgba(36,19,16,0.45) 0%, rgba(36,19,16,0.85) 100%);
+  }
+  .fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px);} to { opacity: 1; transform: translateY(0);} }
+  .room-card:hover .room-img { transform: scale(1.06); }
+  .skel { background: linear-gradient(90deg, #f2e6df 25%, #fbf3ee 37%, #f2e6df 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+  @keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+  #mobileMenu { transition: max-height 0.35s ease, opacity 0.25s ease; }
+</style>
+</head>
+<body class="bg-brand-50 text-brand-900">
+
+<!-- ===================== NAV ===================== -->
+<header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent">
+  <div class="max-w-7xl mx-auto px-5 flex items-center justify-between h-16">
+    <a href="#home" class="flex items-center gap-2">
+      <svg width="32" height="32" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Enuana Hotels & Suites logo" class="shrink-0">
+        <circle cx="20" cy="20" r="19" fill="#a8654a" stroke="#f2e6df" stroke-width="1.5"/>
+        <path d="M11 24 L20 15 L29 24" stroke="#f2e6df" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="20" y="27" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#f2e6df" font-weight="bold">E</text>
+      </svg>
+      <!-- TODO: replace the SVG monogram above with <img src="logo.png" class="h-9 w-9 rounded-full" alt="Enuana Hotels & Suites logo"> once you export the real hotel logo (no logo image file was included in your upload). -->
+      <span class="font-serif text-xl md:text-2xl tracking-wide text-white nav-text">Enuana</span>
+      <span class="hidden sm:inline text-xs uppercase tracking-widest text-brand-200 nav-text">Hotels &amp; Suites</span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-8 text-sm nav-text text-white">
+      <a href="#rooms" class="hover:text-brand-200 transition">Rooms</a>
+      <a href="#amenities" class="hover:text-brand-200 transition">Amenities</a>
+      <a href="#gallery" class="hover:text-brand-200 transition">Gallery</a>
+      <a href="#reviews" class="hover:text-brand-200 transition">Reviews</a>
+      <a href="#contact" class="hover:text-brand-200 transition">Contact</a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <button onclick="openBooking()" class="hidden sm:inline-block bg-brand-400 hover:bg-brand-600 text-white text-sm font-semibold px-5 py-2 rounded-full transition">
+        Book Now
+      </button>
+      <!-- Mobile hamburger -->
+      <button id="menuBtn" class="md:hidden text-white p-2" aria-label="Open menu">
+        <svg id="iconOpen" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="iconClose" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu panel -->
+  <div id="mobileMenu" class="md:hidden overflow-hidden max-h-0 opacity-0 bg-brand-900/98 backdrop-blur">
+    <nav class="flex flex-col px-5 py-4 gap-4 text-white text-base">
+      <a href="#rooms" class="mobile-link py-1 border-b border-white/10">Rooms</a>
+      <a href="#amenities" class="mobile-link py-1 border-b border-white/10">Amenities</a>
+      <a href="#gallery" class="mobile-link py-1 border-b border-white/10">Gallery</a>
+      <a href="#reviews" class="mobile-link py-1 border-b border-white/10">Reviews</a>
+      <a href="#contact" class="mobile-link py-1 border-b border-white/10">Contact</a>
+      <button onclick="openBooking()" class="mt-2 bg-brand-400 hover:bg-brand-600 text-white text-sm font-semibold px-5 py-3 rounded-full transition">
+        Book Now
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section id="home" class="relative h-[92vh] min-h-[560px] flex items-end">
+  <div class="absolute inset-0 bg-brand-800 hero-overlay z-10"></div>
+  <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1600&auto=format&fit=crop"
+       alt="Enuana Hotels & Suites"
+       loading="eager"
+       class="absolute inset-0 w-full h-full object-cover" />
+  <div class="relative z-20 max-w-7xl mx-auto px-5 pb-16 text-white w-full">
+    <p class="uppercase tracking-[0.3em] text-brand-200 text-xs md:text-sm mb-3 fade-in">Toru-Orua · Bayelsa State</p>
+    <h1 class="font-serif text-4xl sm:text-5xl md:text-6xl leading-tight mb-4 fade-in">
+      Where Luxury Meets<br class="hidden sm:block" /> Comfort
+    </h1>
+    <p class="text-brand-100 max-w-xl mb-8 fade-in">
+      Restaurant · Bar · Swimming Pool · Free WiFi · 24/7 Power Supply
+    </p>
+    <div class="flex flex-wrap gap-3 fade-in">
+      <button onclick="openBooking()" class="bg-white text-brand-800 font-semibold px-6 py-3 rounded-full hover:bg-brand-100 transition">
+        Reserve a Room
+      </button>
+      <a href="#rooms" class="border border-white/60 text-white px-6 py-3 rounded-full hover:bg-white/10 transition">
+        View Rooms
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TRUST BADGES ===================== -->
+<section class="bg-brand-700 text-white">
+  <div class="max-w-7xl mx-auto px-5 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-sm">
+    <div class="flex flex-col items-center gap-1">
+      <span class="text-2xl">📶</span> Free WiFi
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="text-2xl">⚡</span> 24/7 Power Supply
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="text-2xl">🏊</span> Swimming Pool
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="text-2xl">🍽️</span> Restaurant &amp; Bar
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section class="max-w-5xl mx-auto px-5 py-16 text-center">
+  <p class="uppercase tracking-widest text-brand-400 text-xs mb-2">Welcome</p>
+  <h2 class="font-serif text-3xl md:text-4xl mb-4">A Warm Stay in the Heart of Toru-Orua</h2>
+  <p class="text-brand-900/70 leading-relaxed">
+    Enuana Hotels &amp; Suites offers well-appointed rooms, a full-service restaurant and bar, and a relaxing
+    poolside escape — all just off A &amp; K Avenue Road GRA. Whether you're visiting for business or leisure,
+    our team is on hand around the clock to make your stay comfortable.
+  </p>
+</section>
+
+<!-- ===================== ROOMS ===================== -->
+<section id="rooms" class="max-w-7xl mx-auto px-5 py-16">
+  <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
+    <div>
+      <p class="uppercase tracking-widest text-brand-400 text-xs mb-2">Accommodation</p>
+      <h2 class="font-serif text-3xl md:text-4xl">Our Rooms &amp; Suites</h2>
+    </div>
+    <div class="flex bg-brand-100 rounded-full p-1 text-sm">
+      <button id="curNGN" onclick="setCurrency('NGN')" class="px-4 py-1.5 rounded-full bg-brand-400 text-white transition">NGN</button>
+      <button id="curUSD" onclick="setCurrency('USD')" class="px-4 py-1.5 rounded-full transition">USD</button>
+    </div>
+  </div>
+
+  <div id="roomsGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Rooms are rendered here by loadRooms(). Skeletons show while Firestore loads. -->
+  </div>
+  <p id="roomsFallbackNote" class="text-xs text-brand-900/50 mt-4 hidden">
+    * Showing sample rooms — connect Firestore <code>/rooms</code> to display live availability and pricing.
+  </p>
+</section>
+
+<!-- ===================== AMENITIES ===================== -->
+<section id="amenities" class="bg-brand-100/60 py-16">
+  <div class="max-w-7xl mx-auto px-5">
+    <p class="uppercase tracking-widest text-brand-400 text-xs mb-2">Experience</p>
+    <h2 class="font-serif text-3xl md:text-4xl mb-10">Restaurant, Bar &amp; Pool</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <span class="text-3xl">🍽️</span>
+        <h3 class="font-serif text-xl mt-4 mb-2">Restaurant</h3>
+        <p class="text-sm text-brand-900/70">Local and continental dishes served fresh, all day.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <span class="text-3xl">🍸</span>
+        <h3 class="font-serif text-xl mt-4 mb-2">Bar</h3>
+        <p class="text-sm text-brand-900/70">Relax with drinks and cocktails in a comfortable lounge setting.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <span class="text-3xl">🏊</span>
+        <h3 class="font-serif text-xl mt-4 mb-2">Swimming Pool</h3>
+        <p class="text-sm text-brand-900/70">Unwind by the pool after a long day of travel or business.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GALLERY ===================== -->
+<section id="gallery" class="max-w-7xl mx-auto px-5 py-16">
+  <p class="uppercase tracking-widest text-brand-400 text-xs mb-2">Gallery</p>
+  <h2 class="font-serif text-3xl md:text-4xl mb-10">A Glimpse Inside</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=500&auto=format&fit=crop" loading="lazy" class="rounded-xl h-40 md:h-56 w-full object-cover" alt="Hotel exterior" />
+    <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=500&auto=format&fit=crop" loading="lazy" class="rounded-xl h-40 md:h-56 w-full object-cover" alt="Standard room" />
+    <img src="https://images.unsplash.com/photo-1591088398332-8a7791972843?q=80&w=500&auto=format&fit=crop" loading="lazy" class="rounded-xl h-40 md:h-56 w-full object-cover" alt="Deluxe room" />
+    <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=500&auto=format&fit=crop" loading="lazy" class="rounded-xl h-40 md:h-56 w-full object-cover" alt="Executive suite" />
+  </div>
+  <p class="text-xs text-brand-900/50 mt-4">* Placeholder images — swap for real hotel photos once available.</p>
+</section>
+
+<!-- ===================== REVIEWS ===================== -->
+<section id="reviews" class="bg-brand-100/60 py-16">
+  <div class="max-w-5xl mx-auto px-5">
+    <p class="uppercase tracking-widest text-brand-400 text-xs mb-2">Guest Reviews</p>
+    <h2 class="font-serif text-3xl md:text-4xl mb-10">What Our Guests Say</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <p class="text-brand-400 mb-2">★★★★★</p>
+        <p class="text-sm text-brand-900/80 mb-3">"Clean rooms, steady power, and the pool was a great way to unwind after the trip."</p>
+        <p class="text-xs text-brand-900/50">— Guest review</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <p class="text-brand-400 mb-2">★★★★★</p>
+        <p class="text-sm text-brand-900/80 mb-3">"Friendly staff and the restaurant food was excellent. Will book again."</p>
+        <p class="text-xs text-brand-900/50">— Guest review</p>
+      </div>
+    </div>
+    <p class="text-xs text-brand-900/50 mt-4">* Sample reviews — replace with real guest feedback once collected.</p>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section id="contact" class="bg-brand-800 text-white py-16">
+  <div class="max-w-7xl mx-auto px-5 grid md:grid-cols-2 gap-10">
+    <div>
+      <p class="uppercase tracking-widest text-brand-200 text-xs mb-2">Get In Touch</p>
+      <h2 class="font-serif text-3xl md:text-4xl mb-6">Booking &amp; Reservations</h2>
+      <div class="space-y-4 text-brand-100">
+        <p class="flex items-center gap-3">
+          <span>📞</span>
+          <a href="tel:+2348122198603" class="hover:underline">0812 219 8603</a>
+        </p>
+        <p class="flex items-center gap-3">
+          <span>📞</span>
+          <a href="tel:+2349138726689" class="hover:underline">0913 872 6689</a>
+        </p>
+        <p class="flex items-center gap-3">
+          <span>💬</span>
+          <a href="https://wa.me/2348122198603" target="_blank" rel="noopener" class="hover:underline">Chat on WhatsApp</a>
+        </p>
+        <p class="flex items-start gap-3">
+          <span>📍</span>
+          <span>A &amp; K Avenue Road GRA, Toru-Orua, Bayelsa State.</span>
+        </p>
+      </div>
+      <button onclick="openBooking()" class="mt-8 bg-white text-brand-800 font-semibold px-6 py-3 rounded-full hover:bg-brand-100 transition">
+        Make a Reservation
+      </button>
+
+      <div class="mt-8 rounded-2xl overflow-hidden border border-white/10">
+        <iframe
+          title="Enuana Hotels & Suites location"
+          src="https://www.google.com/maps?q=Toru-Orua,Bayelsa+State,Nigeria&output=embed"
+          class="w-full h-56 border-0"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </div>
+
+    <div class="bg-brand-700 rounded-2xl p-6">
+      <h3 class="font-serif text-xl mb-4">Send an Enquiry</h3>
+      <form id="enquiryForm" class="space-y-3">
+        <input type="text" name="name" placeholder="Full Name" required
+          class="w-full px-4 py-2.5 rounded-lg bg-brand-800/60 border border-brand-600 placeholder-brand-200 text-white focus:outline-none focus:ring-2 focus:ring-brand-400" />
+        <input type="tel" name="phone" placeholder="Phone Number" required
+          class="w-full px-4 py-2.5 rounded-lg bg-brand-800/60 border border-brand-600 placeholder-brand-200 text-white focus:outline-none focus:ring-2 focus:ring-brand-400" />
+        <textarea name="message" rows="3" placeholder="Message" required
+          class="w-full px-4 py-2.5 rounded-lg bg-brand-800/60 border border-brand-600 placeholder-brand-200 text-white focus:outline-none focus:ring-2 focus:ring-brand-400"></textarea>
+        <button type="submit" id="enquirySubmitBtn" class="w-full bg-brand-400 hover:bg-brand-600 font-semibold py-2.5 rounded-full transition">
+          Send Message
+        </button>
+        <p id="enquiryStatus" class="text-xs text-center min-h-[1rem]"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-brand-900 text-brand-200 py-10 text-center text-sm">
+  <p class="mb-2">&copy; <span id="year"></span> Enuana Hotels &amp; Suites. All rights reserved.</p>
+  <p class="text-brand-200/70">
+    Developed by
+    <a href="https://miracardiacportfolio.vercel.app" target="_blank" rel="noopener" class="text-brand-100 font-medium hover:text-white hover:underline">
+      MiraCardiac
+    </a>
+  </p>
+</footer>
+
+<!-- ===================== BOOKING MODAL ===================== -->
+<div id="bookingModal" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center px-4">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 relative fade-in max-h-[92vh] overflow-y-auto">
+    <button onclick="closeBooking()" class="absolute top-4 right-4 text-brand-900/50 hover:text-brand-900">✕</button>
+    <h3 class="font-serif text-2xl mb-1">Book Your Stay</h3>
+    <p id="bookingRoomLabel" class="text-sm text-brand-900/60 mb-5">Select your room and dates below.</p>
+    <form id="bookingForm" class="space-y-3">
+      <select name="roomChoice" id="roomChoice" class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400">
+        <option value="">Select a room…</option>
+      </select>
+      <input type="text" name="guestName" placeholder="Full Name" required
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      <input type="email" name="guestEmail" placeholder="Email Address" required
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      <input type="tel" name="guestPhone" placeholder="Phone Number" required
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-brand-900/60">Check-in</label>
+          <input type="date" name="checkIn" required class="w-full px-3 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+        </div>
+        <div>
+          <label class="text-xs text-brand-900/60">Check-out</label>
+          <input type="date" name="checkOut" required class="w-full px-3 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
+        </div>
+      </div>
+      <div class="flex justify-between items-center pt-2">
+        <span class="text-sm text-brand-900/60">Total (est.)</span>
+        <span id="bookingTotal" class="font-serif text-xl text-brand-400">₦0</span>
+      </div>
+      <button type="submit" id="bookingSubmitBtn" class="w-full bg-brand-400 hover:bg-brand-600 text-white font-semibold py-3 rounded-full transition disabled:opacity-50">
+        Pay &amp; Confirm Booking
+      </button>
+      <p id="bookingStatus" class="text-xs text-center min-h-[1rem]"></p>
+      <p class="text-xs text-brand-900/40 text-center">Secure payment powered by Paystack</p>
+    </form>
+  </div>
+</div>
+
+<!-- Firebase (compat build — plain <script> tags, no bundler needed) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<!-- Paystack Inline -->
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<!-- ===================== SCRIPTS ===================== -->
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ---------- Navbar background on scroll ----------
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 40) {
+      navbar.classList.add('bg-brand-900/95', 'backdrop-blur', 'shadow-md');
+    } else {
+      navbar.classList.remove('bg-brand-900/95', 'backdrop-blur', 'shadow-md');
+    }
+  });
+
+  // ---------- Mobile menu ----------
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const iconOpen = document.getElementById('iconOpen');
+  const iconClose = document.getElementById('iconClose');
+  let menuOpen = false;
+
+  function setMenu(open) {
+    menuOpen = open;
+    mobileMenu.style.maxHeight = open ? mobileMenu.scrollHeight + 'px' : '0px';
+    mobileMenu.style.opacity = open ? '1' : '0';
+    iconOpen.classList.toggle('hidden', open);
+    iconClose.classList.toggle('hidden', !open);
+    navbar.classList.toggle('bg-brand-900/95', open);
+    navbar.classList.toggle('backdrop-blur', open);
+  }
+  menuBtn.addEventListener('click', () => setMenu(!menuOpen));
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => setMenu(false));
+  });
+
+  // ---------- Booking modal state ----------
+  let currentRoom = { name: '', rate: 0 };
+  let liveRooms = []; // populated by loadRooms()
+
+  function openBooking(roomName = '', rate = 0) {
+    currentRoom = { name: roomName, rate };
+    const label = document.getElementById('bookingRoomLabel');
+    label.textContent = roomName ? `Reserving: ${roomName}` : 'Select your room and dates below.';
+
+    const select = document.getElementById('roomChoice');
+    if (roomName) select.value = roomName;
+
+    document.getElementById('bookingModal').classList.remove('hidden');
+    document.getElementById('bookingModal').classList.add('flex');
+    calcTotal();
+  }
+  function closeBooking() {
+    document.getElementById('bookingModal').classList.add('hidden');
+    document.getElementById('bookingModal').classList.remove('flex');
+  }
+
+  const bookingForm = document.getElementById('bookingForm');
+  const roomChoice = document.getElementById('roomChoice');
+
+  roomChoice.addEventListener('change', () => {
+    const match = liveRooms.find(r => r.name === roomChoice.value);
+    if (match) currentRoom = { name: match.name, rate: match.rate };
+    calcTotal();
+  });
+  bookingForm.addEventListener('input', calcTotal);
+
+  function calcTotal() {
+    const ci = bookingForm.checkIn.value;
+    const co = bookingForm.checkOut.value;
+    let nights = 1;
+    if (ci && co) {
+      const diff = (new Date(co) - new Date(ci)) / (1000 * 60 * 60 * 24);
+      nights = diff > 0 ? diff : 1;
+    }
+    const total = (currentRoom.rate || 0) * nights;
+    document.getElementById('bookingTotal').textContent = formatPrice(total) + (displayCurrency === 'USD' ? ' (charged in NGN)' : '');
+    return { nights, total };
+  }
+
+  // ================= FIREBASE INIT =================
+  // Uses the SAME Firebase project as frontdesk.html / hr.html / accounts.html /
+  // admin.html on purpose: bookings made here need to land in the exact
+  // Firestore that Front Desk and Accounts read from, or online guests would
+  // never show up anywhere staff can see them. (If you'd rather keep Enuana's
+  // data fully isolated from other client apps sharing this Firebase project,
+  // create a dedicated Firebase project later and swap this config + the
+  // config in the other five HTML files at the same time — they must all match.)
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7ty4-tgDn3iQNchRmCDn7lO14kgem10o",
+    authDomain: "mcode-expiring.firebaseapp.com",
+    projectId: "mcode-expiring",
+    storageBucket: "mcode-expiring.firebasestorage.app",
+    messagingSenderId: "755995268786",
+    appId: "1:755995268786:web:d961cf7836f51a0c0e9bab",
+    measurementId: "G-6TRLRCVLJM"
+  };
+
+  let db = null;
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+  } catch (e) {
+    console.warn('Firebase not configured yet — running in fallback mode.', e);
+  }
+
+  // ================= CURRENCY TOGGLE (display only — Paystack always charges NGN) =================
+  // TODO: update this rate periodically, or replace with a live FX API call.
+  const USD_RATE = 1600;
+  let displayCurrency = 'NGN';
+
+  function formatPrice(ngnAmount) {
+    if (displayCurrency === 'USD') {
+      return '$' + (ngnAmount / USD_RATE).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+    return '₦' + ngnAmount.toLocaleString();
+  }
+
+  function setCurrency(cur) {
+    displayCurrency = cur;
+    document.getElementById('curNGN').classList.toggle('bg-brand-400', cur === 'NGN');
+    document.getElementById('curNGN').classList.toggle('text-white', cur === 'NGN');
+    document.getElementById('curUSD').classList.toggle('bg-brand-400', cur === 'USD');
+    document.getElementById('curUSD').classList.toggle('text-white', cur === 'USD');
+    renderRooms(liveRooms.length ? liveRooms : fallbackRooms);
+    calcTotal();
+  }
+  window.setCurrency = setCurrency;
+
+  // ---------- Static fallback rooms (shown if Firestore has no data / isn't configured) ----------
+  const fallbackRooms = [
+    { name: 'Standard Room', rate: 15000, img: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=800&auto=format&fit=crop', desc: 'Cozy and comfortable, perfect for solo travelers or short stays.' },
+    { name: 'Deluxe Room', rate: 25000, img: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?q=80&w=800&auto=format&fit=crop', desc: 'Spacious room with premium furnishing and a work area.' },
+    { name: 'Executive Suite', rate: 40000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=800&auto=format&fit=crop', desc: "Our finest suite with a lounge area, ideal for guests and events." }
+  ];
+
+  function renderRoomCard(room) {
+    return `
+      <div class="room-card bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-100 group">
+        <div class="overflow-hidden h-52">
+          <img src="${room.img}" alt="${room.name}" loading="lazy" class="room-img w-full h-full object-cover transition duration-500" />
+        </div>
+        <div class="p-5">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="font-serif text-xl">${room.name}</h3>
+            <span class="text-brand-400 font-semibold">${formatPrice(room.rate)}<span class="text-xs text-brand-900/50">/night</span></span>
+          </div>
+          <p class="text-sm text-brand-900/70 mb-4">${room.desc || ''}</p>
+          <button onclick="openBooking('${room.name.replace(/'/g, "\\'")}', ${room.rate})" class="w-full bg-brand-400 hover:bg-brand-600 text-white text-sm font-semibold py-2.5 rounded-full transition">
+            Book This Room
+          </button>
+        </div>
+      </div>`;
+  }
+
+  function renderSkeletons(count = 3) {
+    const grid = document.getElementById('roomsGrid');
+    grid.innerHTML = Array(count).fill(`
+      <div class="rounded-2xl overflow-hidden border border-brand-100">
+        <div class="skel h-52 w-full"></div>
+        <div class="p-5 space-y-3">
+          <div class="skel h-5 w-2/3 rounded"></div>
+          <div class="skel h-4 w-full rounded"></div>
+          <div class="skel h-10 w-full rounded-full"></div>
+        </div>
+      </div>`).join('');
+  }
+
+  function renderRooms(rooms) {
+    const grid = document.getElementById('roomsGrid');
+    grid.innerHTML = rooms.map(renderRoomCard).join('');
+    roomChoice.innerHTML = '<option value="">Select a room…</option>' +
+      rooms.map(r => `<option value="${r.name}">${r.name} — ₦${r.rate.toLocaleString()}/night</option>`).join('');
+  }
+
+  function loadRooms() {
+    renderSkeletons();
+
+    if (!db) {
+      liveRooms = fallbackRooms;
+      renderRooms(fallbackRooms);
+      document.getElementById('roomsFallbackNote').classList.remove('hidden');
+      return;
+    }
+
+    db.collection('rooms').where('status', '==', 'vacant').onSnapshot(
+      (snap) => {
+        if (snap.empty) {
+          liveRooms = fallbackRooms;
+          renderRooms(fallbackRooms);
+          document.getElementById('roomsFallbackNote').classList.remove('hidden');
+          return;
+        }
+        const rooms = snap.docs.map(doc => doc.data());
+        liveRooms = rooms;
+        renderRooms(rooms);
+        document.getElementById('roomsFallbackNote').classList.add('hidden');
+      },
+      (err) => {
+        console.warn('Could not load live rooms, showing fallback.', err);
+        liveRooms = fallbackRooms;
+        renderRooms(fallbackRooms);
+        document.getElementById('roomsFallbackNote').classList.remove('hidden');
+      }
+    );
+  }
+  loadRooms();
+
+  // ================= ENQUIRY FORM → FIRESTORE =================
+  document.getElementById('enquiryForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const btn = document.getElementById('enquirySubmitBtn');
+    const status = document.getElementById('enquiryStatus');
+    const data = {
+      name: form.name.value,
+      phone: form.phone.value,
+      message: form.message.value,
+      createdAt: db ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
+    };
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+      if (db) {
+        await db.collection('enquiries').add(data);
+      }
+      status.textContent = "Thanks — we'll get back to you shortly!";
+      status.classList.add('text-green-300');
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      status.textContent = 'Something went wrong. Please try WhatsApp instead.';
+      status.classList.add('text-red-300');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Message';
+    }
+  });
+
+  // ================= BOOKING FORM → PAYSTACK =================
+  // TODO: replace with your live Paystack public key
+  const PAYSTACK_PUBLIC_KEY = 'pk_test_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+
+  bookingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const { nights, total } = calcTotal();
+    const submitBtn = document.getElementById('bookingSubmitBtn');
+    const status = document.getElementById('bookingStatus');
+
+    if (!currentRoom.name) {
+      status.textContent = 'Please select a room.';
+      status.classList.add('text-red-500');
+      return;
+    }
+    if (total <= 0) {
+      status.textContent = 'Please choose valid check-in/check-out dates.';
+      status.classList.add('text-red-500');
+      return;
+    }
+
+    const guestEmail = bookingForm.guestEmail.value;
+    const guestName = bookingForm.guestName.value;
+    const guestPhone = bookingForm.guestPhone.value;
+    const checkIn = bookingForm.checkIn.value;
+    const checkOut = bookingForm.checkOut.value;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Processing…';
+
+    const handler = PaystackPop.setup({
+      key: PAYSTACK_PUBLIC_KEY,
+      email: guestEmail,
+      amount: total * 100, // Paystack expects kobo
+      currency: 'NGN',
+      metadata: {
+        guestName, guestPhone, room: currentRoom.name, checkIn, checkOut, nights
+      },
+      callback: function (response) {
+        // NOTE: for production, verify response.reference server-side
+        // (Pipedream webhook + HMAC-SHA512 signature check) before
+        // marking the booking as paid — never trust the client alone.
+        (async () => {
+          try {
+            if (db) {
+              await db.collection('bookings').add({
+                guestName, guestEmail, guestPhone,
+                room: currentRoom.name, checkIn, checkOut, nights,
+                amount: total,
+                reference: response.reference,
+                status: 'paid_pending_verification',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+              });
+            }
+            status.textContent = 'Payment received — your booking is confirmed!';
+            status.classList.remove('text-red-500');
+            status.classList.add('text-green-600');
+            bookingForm.reset();
+          } catch (err) {
+            console.error(err);
+            status.textContent = 'Payment succeeded, but saving the booking failed. Please contact us with your reference: ' + response.reference;
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Pay & Confirm Booking';
+          }
+        })();
+      },
+      onClose: function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Pay & Confirm Booking';
+        status.textContent = 'Payment window closed.';
+      }
+    });
+    handler.openIframe();
+  });
+</script>
+
+<!-- ===================== WHATSAPP FLOATING BUTTON ===================== -->
+<a href="https://wa.me/2348122198603" target="_blank" rel="noopener"
+   class="fixed bottom-5 right-5 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition"
+   aria-label="Chat on WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="currentColor">
+    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.06h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.14.82.84-3.06-.2-.31a8.16 8.16 0 0 1-1.26-4.37c0-4.52 3.68-8.2 8.21-8.2 2.19 0 4.25.86 5.8 2.41a8.15 8.15 0 0 1 2.4 5.8c0 4.53-3.68 8.24-8.15 8.24zm4.5-6.16c-.25-.12-1.46-.72-1.68-.8-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.96-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.24-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.4-.42-.56-.42-.14-.01-.31-.01-.47-.01a.9.9 0 0 0-.66.31c-.23.24-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.57.12.16 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.66-1.17.21-.58.21-1.07.14-1.17-.06-.11-.22-.17-.47-.29z"/>
+  </svg>
+</a>
+
+</body>
+</html>
