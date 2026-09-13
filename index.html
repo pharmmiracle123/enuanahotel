@@ -50,6 +50,12 @@
             700: '#5c3325',
             800: '#3d2118',
             900: '#241310'
+          },
+          lagoon: {
+            50: '#eef7f5',
+            200: '#a9d4cb',
+            500: '#1f5c56',
+            700: '#123a36'
           }
         },
         fontFamily: {
@@ -72,9 +78,16 @@
   .skel { background: linear-gradient(90deg, #f2e6df 25%, #fbf3ee 37%, #f2e6df 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
   @keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
   #mobileMenu { transition: max-height 0.35s ease, opacity 0.25s ease; }
+  .faq-answer { transition: max-height 0.3s ease, opacity 0.2s ease; }
+  .lightbox-img { transition: transform 0.2s ease; }
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in, .room-img, .faq-answer, .lightbox-img { animation: none !important; transition: none !important; }
+  }
+  ::selection { background: #a8654a; color: #fff; }
+  :focus-visible { outline: 2px solid #a8654a; outline-offset: 2px; }
 </style>
 </head>
-<body class="bg-brand-50 text-brand-900">
+<body class="bg-brand-50 text-brand-900 pb-16 md:pb-0">
 
 <!-- ===================== NAV ===================== -->
 <header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent">
@@ -94,6 +107,7 @@
       <a href="#amenities" class="hover:text-brand-200 transition">Amenities</a>
       <a href="#gallery" class="hover:text-brand-200 transition">Gallery</a>
       <a href="#reviews" class="hover:text-brand-200 transition">Reviews</a>
+      <a href="#faq" class="hover:text-brand-200 transition">FAQ</a>
       <a href="#contact" class="hover:text-brand-200 transition">Contact</a>
     </nav>
 
@@ -118,6 +132,7 @@
       <a href="#amenities" class="mobile-link py-1 border-b border-white/10">Amenities</a>
       <a href="#gallery" class="mobile-link py-1 border-b border-white/10">Gallery</a>
       <a href="#reviews" class="mobile-link py-1 border-b border-white/10">Reviews</a>
+      <a href="#faq" class="mobile-link py-1 border-b border-white/10">FAQ</a>
       <a href="#contact" class="mobile-link py-1 border-b border-white/10">Contact</a>
       <button onclick="openBooking()" class="mt-2 bg-brand-400 hover:bg-brand-600 text-white text-sm font-semibold px-5 py-3 rounded-full transition">
         Book Now
@@ -141,7 +156,7 @@
     <p class="text-brand-100 max-w-xl mb-8 fade-in">
       Restaurant · Bar · Swimming Pool · Free WiFi · 24/7 Power Supply
     </p>
-    <div class="flex flex-wrap gap-3 fade-in">
+    <div class="flex flex-wrap gap-3 fade-in mb-10">
       <button onclick="openBooking()" class="bg-white text-brand-800 font-semibold px-6 py-3 rounded-full hover:bg-brand-100 transition">
         Reserve a Room
       </button>
@@ -149,24 +164,30 @@
         View Rooms
       </a>
     </div>
+    <div class="grid grid-cols-3 max-w-md gap-4 border-t border-white/20 pt-5 fade-in">
+      <div>
+        <p class="font-serif text-2xl">3</p>
+        <p class="text-xs text-brand-200">Room categories</p>
+      </div>
+      <div>
+        <p class="font-serif text-2xl">24/7</p>
+        <p class="text-xs text-brand-200">Power &amp; front desk</p>
+      </div>
+      <div>
+        <p class="font-serif text-2xl">2 min</p>
+        <p class="text-xs text-brand-200">Instant booking confirmation</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ===================== TRUST BADGES ===================== -->
 <section class="bg-brand-700 text-white">
   <div class="max-w-7xl mx-auto px-5 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-sm">
-    <div class="flex flex-col items-center gap-1">
-      <span class="text-2xl">📶</span> Free WiFi
-    </div>
-    <div class="flex flex-col items-center gap-1">
-      <span class="text-2xl">⚡</span> 24/7 Power Supply
-    </div>
-    <div class="flex flex-col items-center gap-1">
-      <span class="text-2xl">🏊</span> Swimming Pool
-    </div>
-    <div class="flex flex-col items-center gap-1">
-      <span class="text-2xl">🍽️</span> Restaurant &amp; Bar
-    </div>
+    <div class="flex flex-col items-center gap-2" id="badgeWifi"></div>
+    <div class="flex flex-col items-center gap-2" id="badgePower"></div>
+    <div class="flex flex-col items-center gap-2" id="badgePool"></div>
+    <div class="flex flex-col items-center gap-2" id="badgeDining"></div>
   </div>
 </section>
 
@@ -179,6 +200,30 @@
     poolside escape — all just off A &amp; K Avenue Road GRA. Whether you're visiting for business or leisure,
     our team is on hand around the clock to make your stay comfortable.
   </p>
+</section>
+
+<!-- ===================== WHY BOOK DIRECT ===================== -->
+<section class="bg-lagoon-700 text-white py-14">
+  <div class="max-w-7xl mx-auto px-5">
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+      <h2 class="font-serif text-2xl md:text-3xl">Book Direct, Book Better</h2>
+      <p class="text-lagoon-200 text-sm max-w-md">Reserving through this page skips agency mark-ups and confirms your room instantly.</p>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-6">
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <h3 class="font-serif text-lg mb-2">Best Rate Guarantee</h3>
+        <p class="text-sm text-lagoon-200">No third-party commission added — you always pay our direct rate.</p>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <h3 class="font-serif text-lg mb-2">Instant Confirmation</h3>
+        <p class="text-sm text-lagoon-200">Your room is marked reserved the moment payment clears — no waiting for a callback.</p>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <h3 class="font-serif text-lg mb-2">Real-Time Support</h3>
+        <p class="text-sm text-lagoon-200">Chat with our front desk right from this page if you have a question before you book.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ===================== ROOMS ===================== -->
@@ -206,23 +251,9 @@
 <section id="amenities" class="bg-brand-100/60 py-16">
   <div class="max-w-7xl mx-auto px-5">
     <p class="uppercase tracking-widest text-brand-400 text-xs mb-2">Experience</p>
-    <h2 class="font-serif text-3xl md:text-4xl mb-10">Restaurant, Bar &amp; Pool</h2>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
-        <span class="text-3xl">🍽️</span>
-        <h3 class="font-serif text-xl mt-4 mb-2">Restaurant</h3>
-        <p class="text-sm text-brand-900/70">Local and continental dishes served fresh, all day.</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
-        <span class="text-3xl">🍸</span>
-        <h3 class="font-serif text-xl mt-4 mb-2">Bar</h3>
-        <p class="text-sm text-brand-900/70">Relax with drinks and cocktails in a comfortable lounge setting.</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
-        <span class="text-3xl">🏊</span>
-        <h3 class="font-serif text-xl mt-4 mb-2">Swimming Pool</h3>
-        <p class="text-sm text-brand-900/70">Unwind by the pool after a long day of travel or business.</p>
-      </div>
+    <h2 class="font-serif text-3xl md:text-4xl mb-10">Everything You Need, On Site</h2>
+    <div id="amenitiesGrid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <!-- rendered by renderAmenities() -->
     </div>
   </div>
 </section>
@@ -231,11 +262,8 @@
 <section id="gallery" class="max-w-7xl mx-auto px-5 py-16">
   <p class="uppercase tracking-widest text-brand-400 text-xs mb-2">Gallery</p>
   <h2 class="font-serif text-3xl md:text-4xl mb-10">A Glimpse Inside</h2>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=500&auto=format&fit=crop" loading="lazy" class="rounded-xl h-40 md:h-56 w-full object-cover" alt="Hotel exterior" />
-    <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=500&auto=format&fit=crop" loading="lazy" class="rounded-xl h-40 md:h-56 w-full object-cover" alt="Standard room" />
-    <img src="https://images.unsplash.com/photo-1591088398332-8a7791972843?q=80&w=500&auto=format&fit=crop" loading="lazy" class="rounded-xl h-40 md:h-56 w-full object-cover" alt="Deluxe room" />
-    <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=500&auto=format&fit=crop" loading="lazy" class="rounded-xl h-40 md:h-56 w-full object-cover" alt="Executive suite" />
+  <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <!-- rendered by renderGallery() -->
   </div>
   <p class="text-xs text-brand-900/50 mt-4">* Placeholder images — swap for real hotel photos once available.</p>
 </section>
@@ -261,6 +289,32 @@
   </div>
 </section>
 
+<!-- ===================== FAQ ===================== -->
+<section id="faq" class="max-w-4xl mx-auto px-5 py-16">
+  <p class="uppercase tracking-widest text-brand-400 text-xs mb-2">Good to Know</p>
+  <h2 class="font-serif text-3xl md:text-4xl mb-10">Frequently Asked Questions</h2>
+  <div id="faqList" class="divide-y divide-brand-200">
+    <!-- rendered by renderFaq() -->
+  </div>
+  <p class="text-xs text-brand-900/50 mt-4">* Sample policy answers — update with the hotel's actual policies.</p>
+</section>
+
+<!-- ===================== NEWSLETTER ===================== -->
+<section class="bg-brand-800 text-white py-14">
+  <div class="max-w-3xl mx-auto px-5 text-center">
+    <h2 class="font-serif text-2xl md:text-3xl mb-2">Hear About Our Offers First</h2>
+    <p class="text-brand-200 text-sm mb-6">Leave your email and we'll let you know about seasonal rates and events.</p>
+    <form id="subscribeForm" class="flex flex-col sm:flex-row gap-3 justify-center">
+      <input type="email" name="email" required placeholder="you@example.com"
+        class="w-full sm:w-80 px-4 py-3 rounded-full bg-brand-700/60 border border-brand-600 placeholder-brand-200 text-white focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      <button type="submit" id="subscribeBtn" class="bg-brand-400 hover:bg-brand-600 font-semibold px-6 py-3 rounded-full transition">
+        Subscribe
+      </button>
+    </form>
+    <p id="subscribeStatus" class="text-xs text-center min-h-[1rem] mt-3 text-brand-200"></p>
+  </div>
+</section>
+
 <!-- ===================== CONTACT ===================== -->
 <section id="contact" class="bg-brand-800 text-white py-16">
   <div class="max-w-7xl mx-auto px-5 grid md:grid-cols-2 gap-10">
@@ -278,7 +332,7 @@
         </p>
         <p class="flex items-center gap-3">
           <span>💬</span>
-          <a href="https://wa.me/2348122198603" target="_blank" rel="noopener" class="hover:underline">Chat on WhatsApp</a>
+          <button onclick="openSupportChat()" class="hover:underline text-left">Chat with our front desk now</button>
         </p>
         <p class="flex items-start gap-3">
           <span>📍</span>
@@ -329,6 +383,17 @@
   </p>
 </footer>
 
+<!-- ===================== STICKY MOBILE BOOK BAR ===================== -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-brand-200 px-4 py-3 flex items-center justify-between gap-3">
+  <div class="text-sm">
+    <p class="text-brand-900/50 text-xs">From</p>
+    <p class="font-serif text-lg leading-none" id="mobileFromPrice">₦15,000</p>
+  </div>
+  <button onclick="openBooking()" class="bg-brand-400 hover:bg-brand-600 text-white font-semibold px-6 py-2.5 rounded-full transition">
+    Book Now
+  </button>
+</div>
+
 <!-- ===================== BOOKING MODAL ===================== -->
 <div id="bookingModal" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center px-4">
   <div class="bg-white rounded-2xl w-full max-w-md p-6 relative fade-in max-h-[92vh] overflow-y-auto">
@@ -355,8 +420,10 @@
           <input type="date" name="checkOut" required class="w-full px-3 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400" />
         </div>
       </div>
-      <div class="flex justify-between items-center pt-2">
-        <span class="text-sm text-brand-900/60">Total (est.)</span>
+      <textarea name="specialRequests" rows="2" placeholder="Special requests (optional)"
+        class="w-full px-4 py-2.5 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-400"></textarea>
+      <div class="flex justify-between items-center pt-2 text-sm text-brand-900/60">
+        <span id="bookingNights">1 night</span>
         <span id="bookingTotal" class="font-serif text-xl text-brand-400">₦0</span>
       </div>
       <button type="submit" id="bookingSubmitBtn" class="w-full bg-brand-400 hover:bg-brand-600 text-white font-semibold py-3 rounded-full transition disabled:opacity-50">
@@ -365,6 +432,49 @@
       <p id="bookingStatus" class="text-xs text-center min-h-[1rem]"></p>
       <p class="text-xs text-brand-900/40 text-center">Secure payment powered by Paystack</p>
     </form>
+  </div>
+</div>
+
+<!-- ===================== GALLERY LIGHTBOX ===================== -->
+<div id="lightbox" class="fixed inset-0 bg-black/85 z-[70] hidden items-center justify-center px-4" onclick="closeLightbox(event)">
+  <button onclick="closeLightbox(event)" class="absolute top-5 right-5 text-white/80 hover:text-white text-2xl">✕</button>
+  <img id="lightboxImg" src="" alt="" class="lightbox-img max-h-[85vh] max-w-full rounded-lg" />
+</div>
+
+<!-- ===================== CUSTOMER CARE (FIRESTORE LIVE CHAT) ===================== -->
+<button id="supportBubble" onclick="openSupportChat()" aria-label="Open customer care chat"
+  class="fixed bottom-20 md:bottom-5 right-5 z-50 bg-lagoon-500 hover:bg-lagoon-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+  </svg>
+</button>
+
+<div id="supportPanel" class="fixed bottom-20 md:bottom-5 right-5 z-50 hidden w-[90vw] max-w-sm bg-white rounded-2xl shadow-2xl border border-brand-200 overflow-hidden fade-in">
+  <div class="bg-lagoon-500 text-white px-4 py-3 flex items-center justify-between">
+    <div>
+      <p class="font-serif text-lg leading-none">Front Desk Chat</p>
+      <p class="text-xs text-lagoon-200">Usually replies shortly</p>
+    </div>
+    <button onclick="closeSupportChat()" class="text-white/80 hover:text-white">✕</button>
+  </div>
+
+  <div id="supportIntake" class="p-4 space-y-3">
+    <p class="text-sm text-brand-900/70">Tell us your name and phone number so a staff member can reach you.</p>
+    <input type="text" id="supportName" placeholder="Full Name" class="w-full px-3 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-lagoon-500" />
+    <input type="tel" id="supportPhone" placeholder="Phone Number" class="w-full px-3 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-lagoon-500" />
+    <button onclick="startSupportChat()" class="w-full bg-lagoon-500 hover:bg-lagoon-700 text-white font-semibold py-2.5 rounded-full transition">
+      Start Chat
+    </button>
+  </div>
+
+  <div id="supportChatBody" class="hidden">
+    <div id="supportMessages" class="h-72 overflow-y-auto p-4 space-y-3 bg-brand-50"></div>
+    <form id="supportForm" class="flex items-center gap-2 p-3 border-t border-brand-200">
+      <input type="text" id="supportInput" placeholder="Type a message…" autocomplete="off"
+        class="flex-1 px-3 py-2 rounded-full border border-brand-200 focus:outline-none focus:ring-2 focus:ring-lagoon-500 text-sm" />
+      <button type="submit" class="bg-lagoon-500 hover:bg-lagoon-700 text-white text-sm font-semibold px-4 py-2 rounded-full transition">Send</button>
+    </form>
+    <p class="text-[11px] text-brand-900/40 text-center pb-2">Full history available on our <a href="customercare.html" class="underline">customer care page</a>.</p>
   </div>
 </div>
 
@@ -409,6 +519,118 @@
     link.addEventListener('click', () => setMenu(false));
   });
 
+  // ================= ICONS (inline SVG, no emoji) =================
+  const ICONS = {
+    wifi: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12.5a11 11 0 0 1 14 0M8.2 15.8a6.5 6.5 0 0 1 7.6 0M11.6 19a2 2 0 0 1 .8 0"/><circle cx="12" cy="19.2" r="0.9" fill="currentColor" stroke="none"/></svg>',
+    power: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>',
+    pool: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 17c1.5 1.3 3 1.3 4.5 0s3-1.3 4.5 0 3 1.3 4.5 0 3-1.3 4.5 0M6 12l4-7h4l4 7"/></svg>',
+    restaurant: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6 2v8a2 2 0 0 0 2 2v10M8 2v8M10 2v8M18 2c-1.7 0-3 2-3 5s1.3 5 3 5v10"/></svg>',
+    bar: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 4h14l-6 8v8m0-8L7 4m5 8v8m-3 0h6"/></svg>',
+    parking: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 16V7h3.5a2.5 2.5 0 0 1 0 5H9"/></svg>',
+    laundry: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4.5"/><circle cx="8" cy="6" r="0.8" fill="currentColor" stroke="none"/></svg>',
+    pickup: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13l2-6h10l3 6M3 13v5h2m14-5v5h-2M5 18a2 2 0 1 0 0-.001M19 18a2 2 0 1 0 0-.001M5 13h14v3H5z"/></svg>'
+  };
+
+  // ================= TRUST BADGES =================
+  function renderBadges() {
+    const items = [
+      { icon: 'wifi', label: 'Free WiFi', id: 'badgeWifi' },
+      { icon: 'power', label: '24/7 Power Supply', id: 'badgePower' },
+      { icon: 'pool', label: 'Swimming Pool', id: 'badgePool' },
+      { icon: 'restaurant', label: 'Restaurant & Bar', id: 'badgeDining' }
+    ];
+    items.forEach(item => {
+      const el = document.getElementById(item.id);
+      if (el) el.innerHTML = `${ICONS[item.icon]}<span>${item.label}</span>`;
+    });
+  }
+  renderBadges();
+
+  // ================= AMENITIES =================
+  const amenities = [
+    { icon: 'restaurant', title: 'Restaurant', desc: 'Local and continental dishes served fresh, all day.' },
+    { icon: 'bar', title: 'Bar', desc: 'Relax with drinks and cocktails in a comfortable lounge setting.' },
+    { icon: 'pool', title: 'Swimming Pool', desc: 'Unwind by the pool after a long day of travel or business.' },
+    { icon: 'wifi', title: 'Free WiFi', desc: 'Stay connected throughout the property at no extra cost.' },
+    { icon: 'parking', title: 'Secure Parking', desc: 'On-site parking watched around the clock.' },
+    { icon: 'laundry', title: 'Laundry Service', desc: 'Same-day laundry available for guests on request.' }
+  ];
+  function renderAmenities() {
+    const grid = document.getElementById('amenitiesGrid');
+    grid.innerHTML = amenities.map(a => `
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <div class="text-brand-400">${ICONS[a.icon]}</div>
+        <h3 class="font-serif text-xl mt-4 mb-2">${a.title}</h3>
+        <p class="text-sm text-brand-900/70">${a.desc}</p>
+      </div>`).join('');
+  }
+  renderAmenities();
+
+  // ================= GALLERY + LIGHTBOX =================
+  const galleryImages = [
+    { src: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=900&auto=format&fit=crop', alt: 'Hotel exterior' },
+    { src: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=900&auto=format&fit=crop', alt: 'Standard room' },
+    { src: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?q=80&w=900&auto=format&fit=crop', alt: 'Deluxe room' },
+    { src: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=900&auto=format&fit=crop', alt: 'Executive suite' }
+  ];
+  function renderGallery() {
+    const grid = document.getElementById('galleryGrid');
+    grid.innerHTML = galleryImages.map(img => `
+      <button onclick="openLightbox('${img.src}', '${img.alt.replace(/'/g, "\\'")}')" class="block">
+        <img src="${img.src}" loading="lazy" class="rounded-xl h-40 md:h-56 w-full object-cover hover:opacity-90 transition" alt="${img.alt}" />
+      </button>`).join('');
+  }
+  renderGallery();
+
+  function openLightbox(src, alt) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxImg').alt = alt;
+    const box = document.getElementById('lightbox');
+    box.classList.remove('hidden');
+    box.classList.add('flex');
+  }
+  function closeLightbox(e) {
+    if (e) e.stopPropagation();
+    const box = document.getElementById('lightbox');
+    box.classList.add('hidden');
+    box.classList.remove('flex');
+  }
+  window.openLightbox = openLightbox;
+  window.closeLightbox = closeLightbox;
+
+  // ================= FAQ ACCORDION =================
+  const faqs = [
+    { q: 'What time is check-in and check-out?', a: 'Check-in is from 12:00 PM and check-out is by 12:00 PM. Early check-in or late check-out can be arranged on request, subject to availability.' },
+    { q: 'Is there a cancellation policy?', a: 'Bookings can be cancelled free of charge up to 24 hours before check-in. Cancellations after this window may attract a one-night charge.' },
+    { q: 'Do you offer airport or park pickup?', a: 'Yes, pickup can be arranged in advance for an additional fee. Message our front desk with your arrival details.' },
+    { q: 'Is parking available on site?', a: 'Yes, secure on-site parking is available at no extra charge for all guests.' }
+  ];
+  function renderFaq() {
+    const list = document.getElementById('faqList');
+    list.innerHTML = faqs.map((f, i) => `
+      <div class="py-4">
+        <button class="faq-toggle w-full flex items-center justify-between text-left gap-4" data-index="${i}">
+          <span class="font-serif text-lg">${f.q}</span>
+          <span class="faq-caret text-brand-400 text-xl leading-none">+</span>
+        </button>
+        <div class="faq-answer overflow-hidden max-h-0 opacity-0">
+          <p class="text-sm text-brand-900/70 pt-3">${f.a}</p>
+        </div>
+      </div>`).join('');
+
+    list.querySelectorAll('.faq-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const answer = btn.nextElementSibling;
+        const caret = btn.querySelector('.faq-caret');
+        const isOpen = answer.style.maxHeight && answer.style.maxHeight !== '0px';
+        answer.style.maxHeight = isOpen ? '0px' : answer.scrollHeight + 'px';
+        answer.style.opacity = isOpen ? '0' : '1';
+        caret.textContent = isOpen ? '+' : '−';
+      });
+    });
+  }
+  renderFaq();
+
   // ---------- Booking modal state ----------
   let currentRoom = { name: '', rate: 0 };
   let liveRooms = [];
@@ -429,6 +651,8 @@
     document.getElementById('bookingModal').classList.add('hidden');
     document.getElementById('bookingModal').classList.remove('flex');
   }
+  window.openBooking = openBooking;
+  window.closeBooking = closeBooking;
 
   const bookingForm = document.getElementById('bookingForm');
   const roomChoice = document.getElementById('roomChoice');
@@ -449,11 +673,14 @@
       nights = diff > 0 ? diff : 1;
     }
     const total = (currentRoom.rate || 0) * nights;
+    document.getElementById('bookingNights').textContent = `${nights} night${nights > 1 ? 's' : ''}`;
     document.getElementById('bookingTotal').textContent = formatPrice(total) + (displayCurrency === 'USD' ? ' (charged in NGN)' : '');
     return { nights, total };
   }
 
   // ================= FIREBASE INIT =================
+  // Shared Firebase project used across MiraCardiac client apps — collections are
+  // namespaced per site ("rooms", "enquiries", "bookings", "support_chats", "subscribers").
   const firebaseConfig = {
     apiKey: "AIzaSyD7ty4-tgDn3iQNchRmCDn7lO14kgem10o",
     authDomain: "mcode-expiring.firebaseapp.com",
@@ -495,25 +722,39 @@
   window.setCurrency = setCurrency;
 
   // ---------- Static fallback rooms ----------
+  const DEFAULT_ROOM_IMAGE = 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=800&auto=format&fit=crop';
   const fallbackRooms = [
-    { name: 'Standard Room', rate: 15000, img: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=800&auto=format&fit=crop', desc: 'Cozy and comfortable, perfect for solo travelers or short stays.' },
-    { name: 'Deluxe Room', rate: 25000, img: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?q=80&w=800&auto=format&fit=crop', desc: 'Spacious room with premium furnishing and a work area.' },
-    { name: 'Executive Suite', rate: 40000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=800&auto=format&fit=crop', desc: "Our finest suite with a lounge area, ideal for guests and events." }
+    { name: 'Standard Room', rate: 15000, img: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=800&auto=format&fit=crop', desc: 'Cozy and comfortable, perfect for solo travelers or short stays.', tags: ['Sleeps 2', 'AC', 'Free WiFi'] },
+    { name: 'Deluxe Room', rate: 25000, img: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?q=80&w=800&auto=format&fit=crop', desc: 'Spacious room with premium furnishing and a work area.', tags: ['Sleeps 2-3', 'AC', 'Work desk'] },
+    { name: 'Executive Suite', rate: 40000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=800&auto=format&fit=crop', desc: "Our finest suite with a lounge area, ideal for guests and events.", tags: ['Sleeps 4', 'Lounge area', 'Mini fridge'] }
   ];
 
+  // Standardises how a room image resolves: use the Firestore-provided URL when
+  // present, otherwise fall back to a default photo, and recover gracefully if the
+  // stored URL 404s or is malformed instead of showing a broken image icon.
+  function getRoomImage(room) {
+    return (room && typeof room.img === 'string' && room.img.trim()) ? room.img.trim() : DEFAULT_ROOM_IMAGE;
+  }
+
   function renderRoomCard(room) {
+    const img = getRoomImage(room);
+    const tags = Array.isArray(room.tags) ? room.tags : [];
+    const safeName = String(room.name || '').replace(/'/g, "\\'");
     return `
       <div class="room-card bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-100 group">
-        <div class="overflow-hidden h-52">
-          <img src="\( {room.img}" alt=" \){room.name}" loading="lazy" class="room-img w-full h-full object-cover transition duration-500" />
+        <div class="overflow-hidden h-52 bg-brand-100">
+          <img src="${img}" alt="${room.name}" loading="lazy"
+               onerror="this.onerror=null;this.src='${DEFAULT_ROOM_IMAGE}';"
+               class="room-img w-full h-full object-cover transition duration-500" />
         </div>
         <div class="p-5">
           <div class="flex justify-between items-start mb-2">
             <h3 class="font-serif text-xl">${room.name}</h3>
             <span class="text-brand-400 font-semibold">${formatPrice(room.rate)}<span class="text-xs text-brand-900/50">/night</span></span>
           </div>
-          <p class="text-sm text-brand-900/70 mb-4">${room.desc || ''}</p>
-          <button onclick="openBooking('${room.name.replace(/'/g, "\\'")}', ${room.rate})" class="w-full bg-brand-400 hover:bg-brand-600 text-white text-sm font-semibold py-2.5 rounded-full transition">
+          <p class="text-sm text-brand-900/70 mb-3">${room.desc || ''}</p>
+          ${tags.length ? `<div class="flex flex-wrap gap-2 mb-4">${tags.map(t => `<span class="text-xs bg-brand-100 text-brand-700 px-2.5 py-1 rounded-full">${t}</span>`).join('')}</div>` : ''}
+          <button onclick="openBooking('${safeName}', ${room.rate})" class="w-full bg-brand-400 hover:bg-brand-600 text-white text-sm font-semibold py-2.5 rounded-full transition">
             Book This Room
           </button>
         </div>
@@ -537,7 +778,11 @@
     const grid = document.getElementById('roomsGrid');
     grid.innerHTML = rooms.map(renderRoomCard).join('');
     roomChoice.innerHTML = '<option value="">Select a room…</option>' +
-      rooms.map(r => `<option value="\( {r.name}"> \){r.name} — ₦${r.rate.toLocaleString()}/night</option>`).join('');
+      rooms.map(r => `<option value="${r.name}">${r.name} — ₦${r.rate.toLocaleString()}/night</option>`).join('');
+
+    const cheapest = rooms.reduce((min, r) => (r.rate < min ? r.rate : min), rooms[0] ? rooms[0].rate : 0);
+    const mobilePrice = document.getElementById('mobileFromPrice');
+    if (mobilePrice) mobilePrice.textContent = formatPrice(cheapest);
   }
 
   function loadRooms() {
@@ -598,13 +843,154 @@
       form.reset();
     } catch (err) {
       console.error(err);
-      status.textContent = 'Something went wrong. Please try WhatsApp instead.';
+      status.textContent = 'Something went wrong. Please use the chat button instead.';
       status.classList.add('text-red-300');
     } finally {
       btn.disabled = false;
       btn.textContent = 'Send Message';
     }
   });
+
+  // ================= NEWSLETTER → FIRESTORE =================
+  document.getElementById('subscribeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const btn = document.getElementById('subscribeBtn');
+    const status = document.getElementById('subscribeStatus');
+    const email = form.email.value;
+
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    try {
+      if (db) {
+        await db.collection('subscribers').add({
+          email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      status.textContent = "You're on the list — thank you!";
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      status.textContent = 'Could not save your email — please try again.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Subscribe';
+    }
+  });
+
+  // ================= CUSTOMER CARE — FIRESTORE LIVE CHAT =================
+  // Collections used (build customercare.html against the same structure):
+  //   support_chats/{sessionId}                 -> { name, phone, createdAt, lastMessageAt }
+  //   support_chats/{sessionId}/messages/{id}    -> { sender: 'guest' | 'staff', text, createdAt }
+  const SUPPORT_SESSION_KEY = 'enuana_support_session_id';
+  let supportSessionId = localStorage.getItem(SUPPORT_SESSION_KEY) || null;
+  let supportUnsubscribe = null;
+
+  function openSupportChat() {
+    document.getElementById('supportPanel').classList.remove('hidden');
+    if (supportSessionId) {
+      showSupportChatBody();
+    }
+  }
+  function closeSupportChat() {
+    document.getElementById('supportPanel').classList.add('hidden');
+  }
+  window.openSupportChat = openSupportChat;
+  window.closeSupportChat = closeSupportChat;
+
+  function showSupportChatBody() {
+    document.getElementById('supportIntake').classList.add('hidden');
+    document.getElementById('supportChatBody').classList.remove('hidden');
+    listenToSupportMessages();
+  }
+
+  async function startSupportChat() {
+    const name = document.getElementById('supportName').value.trim();
+    const phone = document.getElementById('supportPhone').value.trim();
+    if (!name || !phone) return;
+
+    if (!db) {
+      alert('Live chat is temporarily unavailable — please call us instead.');
+      return;
+    }
+
+    try {
+      const docRef = await db.collection('support_chats').add({
+        name,
+        phone,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastMessageAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      supportSessionId = docRef.id;
+      localStorage.setItem(SUPPORT_SESSION_KEY, supportSessionId);
+      showSupportChatBody();
+    } catch (err) {
+      console.error(err);
+      alert('Could not start chat — please try again or call the front desk.');
+    }
+  }
+  window.startSupportChat = startSupportChat;
+
+  function listenToSupportMessages() {
+    if (!db || !supportSessionId) return;
+    if (supportUnsubscribe) supportUnsubscribe();
+
+    supportUnsubscribe = db.collection('support_chats').doc(supportSessionId)
+      .collection('messages').orderBy('createdAt', 'asc')
+      .onSnapshot(snap => {
+        const container = document.getElementById('supportMessages');
+        container.innerHTML = snap.docs.map(doc => {
+          const m = doc.data();
+          const mine = m.sender === 'guest';
+          return `<div class="flex ${mine ? 'justify-end' : 'justify-start'}">
+            <div class="max-w-[80%] px-3 py-2 rounded-2xl text-sm ${mine ? 'bg-lagoon-500 text-white' : 'bg-white border border-brand-200 text-brand-900'}">
+              ${String(m.text || '').replace(/</g, '&lt;')}
+            </div>
+          </div>`;
+        }).join('');
+        container.scrollTop = container.scrollHeight;
+      }, err => console.warn('Chat listener error', err));
+  }
+
+  document.getElementById('supportForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('supportInput');
+    const text = input.value.trim();
+    if (!text || !supportSessionId || !db) return;
+    input.value = '';
+
+    try {
+      await db.collection('support_chats').doc(supportSessionId).collection('messages').add({
+        sender: 'guest',
+        text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await db.collection('support_chats').doc(supportSessionId).update({
+        lastMessageAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  // ================= PAYSTACK FEE CONFIGURATION =================
+  // Controls exactly how much of each booking is routed to the platform (MiraCardiac)
+  // via transaction_charge, before Paystack settles the remainder to the hotel's
+  // subaccount below. "bearer: subaccount" means Paystack's own processing fee is
+  // absorbed by the hotel, not deducted a second time from the platform's cut —
+  // so only the fee configured here is ever taken off the top.
+  const PLATFORM_FEE_TYPE = 'flat';     // 'flat' (fixed ₦ amount) or 'percent' (% of booking total)
+  const PLATFORM_FEE_FLAT_NGN = 500;    // used when PLATFORM_FEE_TYPE === 'flat'
+  const PLATFORM_FEE_PERCENT = 2;       // used when PLATFORM_FEE_TYPE === 'percent'
+
+  function calcPlatformFeeKobo(totalNGN) {
+    const feeNGN = PLATFORM_FEE_TYPE === 'percent'
+      ? Math.round(totalNGN * (PLATFORM_FEE_PERCENT / 100))
+      : PLATFORM_FEE_FLAT_NGN;
+    return Math.max(0, Math.round(feeNGN * 100)); // Paystack expects kobo
+  }
 
   // ================= BOOKING FORM → PAYSTACK =================
   const PAYSTACK_PUBLIC_KEY = "pk_live_1360dbbf248bd92c3afcb1b2b9a132f13f941d83";
@@ -632,6 +1018,7 @@
     const guestPhone = bookingForm.guestPhone.value;
     const checkIn = bookingForm.checkIn.value;
     const checkOut = bookingForm.checkOut.value;
+    const specialRequests = bookingForm.specialRequests.value;
 
     submitBtn.disabled = true;
     submitBtn.textContent = 'Processing…';
@@ -641,19 +1028,21 @@
       email: guestEmail,
       amount: total * 100,          // Paystack expects amount in kobo
       currency: 'NGN',
-      subaccount: PAYSTACK_SUBACCOUNT,  // ← money goes to this subaccount
-      // bearer: 'subaccount',         // uncomment if you want the subaccount to pay the fee
-      // transaction_charge: 0,        // optional: amount (in kobo) you want to keep on main account
+      subaccount: PAYSTACK_SUBACCOUNT,       // hotel's account — receives the remainder after the platform fee
+      transaction_charge: calcPlatformFeeKobo(total), // only this configured fee goes to the platform
+      bearer: 'subaccount',                  // hotel absorbs Paystack's processing charge, not the guest or platform
       metadata: {
         guestName,
         guestPhone,
         room: currentRoom.name,
         checkIn,
         checkOut,
-        nights
+        nights,
+        specialRequests
       },
       callback: function (response) {
-        // NOTE: For production, verify the payment server-side before confirming
+        // NOTE: For production, verify the payment server-side (Pipedream webhook)
+        // before treating the booking as confirmed.
         (async () => {
           try {
             if (db) {
@@ -665,6 +1054,7 @@
                 checkIn,
                 checkOut,
                 nights,
+                specialRequests,
                 amount: total,
                 reference: response.reference,
                 status: 'paid_pending_verification',
@@ -694,15 +1084,6 @@
     handler.openIframe();
   });
 </script>
-
-<!-- ===================== WHATSAPP FLOATING BUTTON ===================== -->
-<a href="https://wa.me/2348122198603" target="_blank" rel="noopener"
-   class="fixed bottom-5 right-5 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition"
-   aria-label="Chat on WhatsApp">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7" fill="currentColor">
-    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.06h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.14.82.84-3.06-.2-.31a8.16 8.16 0 0 1-1.26-4.37c0-4.52 3.68-8.2 8.21-8.2 2.19 0 4.25.86 5.8 2.41a8.15 8.15 0 0 1 2.4 5.8c0 4.53-3.68 8.24-8.15 8.24zm4.5-6.16c-.25-.12-1.46-.72-1.68-.8-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.96-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.24-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.4-.42-.56-.42-.14-.01-.31-.01-.47-.01a.9.9 0 0 0-.66.31c-.23.24-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.57.12.16 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.66-1.17.21-.58.21-1.07.14-1.17-.06-.11-.22-.17-.47-.29z"/>
-  </svg>
-</a>
 
 </body>
 </html>
