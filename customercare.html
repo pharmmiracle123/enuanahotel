@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Front Desk Chat | Enuana Hotels & Suites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: { 50:'#faf6f4',100:'#f2e6df',200:'#e2c4b5',300:'#cf9d81',400:'#a8654a',600:'#7a4531',700:'#5c3325',800:'#3d2118',900:'#241310' },
+          lagoon: { 50:'#eef7f5',200:'#a9d4cb',500:'#1f5c56',700:'#123a36' }
+        },
+        fontFamily: { serif: ['"Playfair Display"','Georgia','serif'], sans: ['Inter','ui-sans-serif','system-ui'] }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .chat-item.active { background: #f2e6df; }
+  #messages { scroll-behavior: smooth; }
+  :focus-visible { outline: 2px solid #1f5c56; outline-offset: 2px; }
+</style>
+</head>
+<body class="bg-brand-50 text-brand-900 h-screen flex flex-col overflow-hidden">
+
+<!-- ===================== HEADER ===================== -->
+<header class="bg-brand-900 text-white h-16 flex items-center justify-between px-5 shrink-0">
+  <div class="flex items-center gap-2">
+    <svg width="28" height="28" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="19" fill="#a8654a" stroke="#f2e6df" stroke-width="1.5"/>
+      <path d="M11 24 L20 15 L29 24" stroke="#f2e6df" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="20" y="27" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#f2e6df" font-weight="bold">E</text>
+    </svg>
+    <span class="font-serif text-lg">Front Desk Chat</span>
+  </div>
+  <div class="flex items-center gap-4 text-sm">
+    <span id="staffEmail" class="text-brand-200 hidden sm:inline"></span>
+    <button onclick="staffSignOut()" class="text-brand-200 hover:text-white">Sign out</button>
+  </div>
+</header>
+
+<!-- ===================== SIGN-IN GATE ===================== -->
+<div id="authGate" class="flex-1 flex items-center justify-center px-5">
+  <div class="bg-white rounded-2xl shadow-sm border border-brand-200 p-8 max-w-sm w-full text-center">
+    <h1 class="font-serif text-2xl mb-2">Staff Sign In</h1>
+    <p class="text-sm text-brand-900/60 mb-6">Sign in with your staff account to view guest chats.</p>
+    <input type="email" id="staffLoginEmail" placeholder="Email" class="w-full px-4 py-2.5 rounded-lg border border-brand-200 mb-3 focus:outline-none focus:ring-2 focus:ring-lagoon-500" />
+    <input type="password" id="staffLoginPassword" placeholder="Password" class="w-full px-4 py-2.5 rounded-lg border border-brand-200 mb-4 focus:outline-none focus:ring-2 focus:ring-lagoon-500" />
+    <button onclick="staffSignIn()" class="w-full bg-lagoon-500 hover:bg-lagoon-700 text-white font-semibold py-2.5 rounded-full transition">Sign In</button>
+    <p id="authError" class="text-xs text-red-500 mt-3 min-h-[1rem]"></p>
+    <p class="text-[11px] text-brand-900/40 mt-4">Uses the same staff accounts as the HMS portal — no separate sign-up needed.</p>
+  </div>
+</div>
+
+<!-- ===================== MAIN APP (hidden until signed in) ===================== -->
+<main id="appShell" class="hidden flex-1 min-h-0 flex">
+
+  <!-- ---------- Sidebar: chat list ---------- -->
+  <aside id="chatListPane" class="w-full sm:w-80 border-r border-brand-200 bg-white flex flex-col shrink-0">
+    <div class="p-4 border-b border-brand-100">
+      <input type="text" id="chatSearch" placeholder="Search by name or phone…"
+        class="w-full px-3 py-2 rounded-full border border-brand-200 text-sm focus:outline-none focus:ring-2 focus:ring-lagoon-500" />
+    </div>
+    <div id="chatList" class="flex-1 overflow-y-auto divide-y divide-brand-100">
+      <!-- rendered by renderChatList() -->
+    </div>
+    <p id="chatListEmpty" class="text-sm text-brand-900/50 text-center p-6 hidden">No guest chats yet.</p>
+  </aside>
+
+  <!-- ---------- Conversation panel ---------- -->
+  <section id="conversationPane" class="hidden sm:flex flex-col flex-1 min-h-0">
+    <div id="conversationHeader" class="h-16 border-b border-brand-200 bg-white flex items-center justify-between px-5 shrink-0">
+      <div>
+        <p id="convName" class="font-serif text-lg leading-none">Select a chat</p>
+        <p id="convPhone" class="text-xs text-brand-900/50"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="backToListBtn" onclick="showChatList()" class="sm:hidden text-sm text-brand-700">← Back</button>
+        <button id="resolveBtn" onclick="toggleResolved()" class="hidden text-xs font-semibold px-3 py-1.5 rounded-full border border-brand-300 text-brand-700 hover:bg-brand-100"></button>
+      </div>
+    </div>
+    <div id="messages" class="flex-1 overflow-y-auto p-5 space-y-3 bg-brand-50"></div>
+    <form id="replyForm" class="hidden items-center gap-2 p-4 border-t border-brand-200 bg-white">
+      <input type="text" id="replyInput" placeholder="Type a reply…" autocomplete="off"
+        class="flex-1 px-4 py-2.5 rounded-full border border-brand-200 focus:outline-none focus:ring-2 focus:ring-lagoon-500 text-sm" />
+      <button type="submit" class="bg-lagoon-500 hover:bg-lagoon-700 text-white font-semibold px-5 py-2.5 rounded-full transition">Send</button>
+    </form>
+  </section>
+
+  <!-- Placeholder shown on desktop before a chat is selected -->
+  <section id="noChatSelected" class="hidden sm:flex flex-1 items-center justify-center text-brand-900/40 text-sm">
+    Select a conversation from the left to reply.
+  </section>
+</main>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // Same shared Firebase project as the main site and HMS staff portal.
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7ty4-tgDn3iQNchRmCDn7lO14kgem10o",
+    authDomain: "mcode-expiring.firebaseapp.com",
+    projectId: "mcode-expiring",
+    storageBucket: "mcode-expiring.firebasestorage.app",
+    messagingSenderId: "755995268786",
+    appId: "1:755995268786:web:d961cf7836f51a0c0e9bab",
+    measurementId: "G-6TRLRCVLJM"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // ================= AUTH =================
+  // Reuses the same staff accounts as the HMS staff login (Firebase Auth +
+  // /staff collection). No role check is enforced here yet — if only certain
+  // roles (e.g. frontdesk, admin) should see guest chats, add a lookup against
+  // the /staff collection here before showing appShell.
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById('authGate').classList.add('hidden');
+      document.getElementById('appShell').classList.remove('hidden');
+      document.getElementById('staffEmail').textContent = user.email || '';
+      startChatListListener();
+    } else {
+      document.getElementById('authGate').classList.remove('hidden');
+      document.getElementById('appShell').classList.add('hidden');
+    }
+  });
+
+  function staffSignIn() {
+    const email = document.getElementById('staffLoginEmail').value.trim();
+    const password = document.getElementById('staffLoginPassword').value;
+    const errorEl = document.getElementById('authError');
+    errorEl.textContent = '';
+    auth.signInWithEmailAndPassword(email, password).catch(err => {
+      errorEl.textContent = 'Could not sign in — check your email and password.';
+      console.error(err);
+    });
+  }
+  function staffSignOut() {
+    auth.signOut();
+  }
+  window.staffSignIn = staffSignIn;
+  window.staffSignOut = staffSignOut;
+
+  // ================= CHAT LIST =================
+  let allChats = [];
+  let activeChatId = null;
+  let messagesUnsubscribe = null;
+  let chatListUnsubscribe = null;
+
+  function startChatListListener() {
+    if (chatListUnsubscribe) chatListUnsubscribe();
+    chatListUnsubscribe = db.collection('support_chats')
+      .orderBy('lastMessageAt', 'desc')
+      .onSnapshot(snap => {
+        allChats = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderChatList();
+      }, err => console.error('Chat list error', err));
+  }
+
+  function renderChatList() {
+    const query = (document.getElementById('chatSearch').value || '').toLowerCase();
+    const filtered = allChats.filter(c =>
+      (c.name || '').toLowerCase().includes(query) || (c.phone || '').includes(query)
+    );
+
+    const list = document.getElementById('chatList');
+    document.getElementById('chatListEmpty').classList.toggle('hidden', filtered.length > 0);
+
+    list.innerHTML = filtered.map(c => {
+      const time = c.lastMessageAt && c.lastMessageAt.toDate ? formatTime(c.lastMessageAt.toDate()) : '';
+      const isActive = c.id === activeChatId;
+      const resolved = c.status === 'resolved';
+      return `
+        <button class="chat-item w-full text-left px-4 py-3 hover:bg-brand-50 transition ${isActive ? 'active' : ''}" onclick="selectChat('${c.id}')">
+          <div class="flex items-center justify-between">
+            <span class="font-medium text-sm">${escapeHtml(c.name || 'Guest')}</span>
+            <span class="text-xs text-brand-900/40">${time}</span>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="text-xs text-brand-900/50">${escapeHtml(c.phone || '')}</span>
+            ${resolved ? '<span class="text-[10px] uppercase tracking-wide text-lagoon-500">Resolved</span>' : ''}
+          </div>
+        </button>`;
+    }).join('');
+  }
+  document.getElementById('chatSearch').addEventListener('input', renderChatList);
+
+  function selectChat(chatId) {
+    activeChatId = chatId;
+    const chat = allChats.find(c => c.id === chatId);
+    if (!chat) return;
+
+    document.getElementById('convName').textContent = chat.name || 'Guest';
+    document.getElementById('convPhone').textContent = chat.phone || '';
+    document.getElementById('replyForm').classList.remove('hidden');
+    document.getElementById('replyForm').classList.add('flex');
+
+    const resolveBtn = document.getElementById('resolveBtn');
+    resolveBtn.classList.remove('hidden');
+    resolveBtn.textContent = chat.status === 'resolved' ? 'Reopen' : 'Mark Resolved';
+
+    renderChatList();
+    showConversation();
+    listenToMessages(chatId);
+  }
+  window.selectChat = selectChat;
+
+  function listenToMessages(chatId) {
+    if (messagesUnsubscribe) messagesUnsubscribe();
+    messagesUnsubscribe = db.collection('support_chats').doc(chatId).collection('messages')
+      .orderBy('createdAt', 'asc')
+      .onSnapshot(snap => {
+        const container = document.getElementById('messages');
+        container.innerHTML = snap.docs.map(doc => {
+          const m = doc.data();
+          const fromStaff = m.sender === 'staff';
+          return `<div class="flex ${fromStaff ? 'justify-end' : 'justify-start'}">
+            <div class="max-w-[70%] px-3.5 py-2 rounded-2xl text-sm ${fromStaff ? 'bg-lagoon-500 text-white' : 'bg-white border border-brand-200 text-brand-900'}">
+              ${escapeHtml(m.text || '')}
+            </div>
+          </div>`;
+        }).join('');
+        container.scrollTop = container.scrollHeight;
+      }, err => console.error('Messages error', err));
+  }
+
+  document.getElementById('replyForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('replyInput');
+    const text = input.value.trim();
+    if (!text || !activeChatId) return;
+    input.value = '';
+
+    try {
+      await db.collection('support_chats').doc(activeChatId).collection('messages').add({
+        sender: 'staff',
+        text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await db.collection('support_chats').doc(activeChatId).update({
+        lastMessageAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  async function toggleResolved() {
+    if (!activeChatId) return;
+    const chat = allChats.find(c => c.id === activeChatId);
+    const nextStatus = chat && chat.status === 'resolved' ? 'open' : 'resolved';
+    await db.collection('support_chats').doc(activeChatId).update({ status: nextStatus });
+  }
+  window.toggleResolved = toggleResolved;
+
+  // ================= MOBILE LIST/CONVERSATION SWITCHING =================
+  function showConversation() {
+    document.getElementById('chatListPane').classList.add('hidden');
+    document.getElementById('conversationPane').classList.remove('hidden');
+    document.getElementById('conversationPane').classList.add('flex');
+    document.getElementById('noChatSelected').classList.add('hidden');
+  }
+  function showChatList() {
+    document.getElementById('chatListPane').classList.remove('hidden');
+    document.getElementById('conversationPane').classList.add('hidden');
+  }
+  window.showChatList = showChatList;
+
+  // Desktop starts with the empty-state placeholder visible until a chat is picked
+  if (window.innerWidth >= 640) {
+    document.getElementById('noChatSelected').classList.remove('hidden');
+    document.getElementById('noChatSelected').classList.add('flex');
+  }
+
+  // ================= HELPERS =================
+  function formatTime(date) {
+    const now = new Date();
+    const sameDay = date.toDateString() === now.toDateString();
+    return sameDay
+      ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  }
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, s => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s]));
+  }
+</script>
+
+</body>
+</html>
